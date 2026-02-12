@@ -81,19 +81,11 @@ header .dates {
 
 .toolbar-btn:hover { border-color: var(--text-dim); color: var(--text); }
 .toolbar-btn.active { border-color: var(--selected); color: var(--selected); }
-
-.toolbar-btn.accent {
-  border-color: var(--selected);
-  color: var(--selected);
-}
+.toolbar-btn.accent { border-color: var(--selected); color: var(--selected); }
 .toolbar-btn.accent:hover { background: var(--selected); color: var(--bg-dark); }
 .toolbar-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
 
-.count-badge {
-  font-size: 0.55rem;
-  color: var(--selected);
-  margin-left: 0.2rem;
-}
+.count-badge { font-size: 0.55rem; color: var(--selected); margin-left: 0.2rem; }
 
 .day-tabs {
   display: flex;
@@ -146,10 +138,6 @@ header .dates {
   min-width: var(--venue-w);
 }
 
-.time-header-row {
-  display: contents;
-}
-
 .time-label {
   font-size: 0.55rem;
   font-weight: 400;
@@ -161,10 +149,6 @@ header .dates {
   white-space: nowrap;
   min-width: var(--hour-w);
   width: var(--hour-w);
-}
-
-.venue-row {
-  display: contents;
 }
 
 .venue-label {
@@ -186,12 +170,6 @@ header .dates {
   min-width: var(--venue-w);
   height: var(--row-h);
   line-height: 1.3;
-}
-
-.venue-track {
-  position: relative;
-  border-bottom: 1px solid var(--border-light);
-  height: var(--row-h);
 }
 
 .venue-track-cell {
@@ -218,15 +196,8 @@ header .dates {
   z-index: 1;
 }
 
-.event-block:hover {
-  background: var(--card-hover);
-  z-index: 2;
-}
-
-.event-block.selected {
-  background: var(--selected-bg);
-  border-color: var(--selected-border);
-}
+.event-block:hover { background: var(--card-hover); z-index: 2; }
+.event-block.selected { background: var(--selected-bg); border-color: var(--selected-border); }
 
 .event-block .ev-name {
   font-size: 0.6rem;
@@ -238,9 +209,7 @@ header .dates {
   transition: color 0.15s ease;
 }
 
-.event-block.selected .ev-name {
-  color: var(--selected);
-}
+.event-block.selected .ev-name { color: var(--selected); }
 
 .event-block .ev-time {
   font-size: 0.5rem;
@@ -279,26 +248,122 @@ footer {
   letter-spacing: 0.1em;
 }
 
-.now-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #e05050;
-  z-index: 5;
-  pointer-events: none;
+/* Artist detail panel */
+.panel-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
 }
 
-.now-line::before {
-  content: '';
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #e05050;
+.panel-overlay.open { display: block; }
+
+.artist-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 90vw);
+  background: var(--bg-dark);
+  z-index: 101;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  -webkit-overflow-scrolling: touch;
 }
+
+.artist-panel.open { transform: translateX(0); }
+
+.panel-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-close:hover { color: var(--text); }
+
+.panel-img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.panel-body { padding: 1.25rem; }
+
+.panel-artist-name {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.panel-artist-name.is-selected { color: var(--selected); }
+
+.panel-meta {
+  font-size: 0.6rem;
+  font-weight: 300;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.panel-bio {
+  font-size: 0.7rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+
+.panel-links { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+
+.panel-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.panel-link:hover { border-color: var(--text); color: var(--text); }
+
+.panel-star-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--selected);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--selected);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.panel-star-btn:hover { background: var(--selected); color: var(--bg-dark); }
+.panel-star-btn.is-selected { background: var(--selected); color: var(--bg-dark); }
 </style>
 </head>
 <body>
@@ -323,7 +388,20 @@ footer {
 
 <div id="schedule-container"></div>
 
-<footer>Click an artist to star &middot; selections saved locally</footer>
+<footer>Click to star &middot; Right-click for artist info &middot; Selections saved locally</footer>
+
+<div class="panel-overlay" id="panel-overlay"></div>
+<div class="artist-panel" id="artist-panel">
+  <button class="panel-close" id="panel-close">&times;</button>
+  <img class="panel-img" id="panel-img" src="" alt="">
+  <div class="panel-body">
+    <div class="panel-artist-name" id="panel-name"></div>
+    <div class="panel-meta" id="panel-meta"></div>
+    <div class="panel-bio" id="panel-bio"></div>
+    <div class="panel-links" id="panel-links"></div>
+    <button class="panel-star-btn" id="panel-star"></button>
+  </div>
+</div>
 
 <script>
 const VENUES = [
@@ -337,6 +415,254 @@ const VENUES = [
   { id: "sabha", name: "Sabha Bhavan" },
 ];
 
+const ARTISTS = {
+  "Antariksh Daddy": {
+    bio: "Anandit Sachdev (aka Antariksh Daddy) is a sound artist, researcher, DJ and electronic music producer based out of Delhi. In 2018, he established Antariksh Records, a label focused on dance music curation across South Asia. He\u2019s performed internationally in Germany, Egypt, and Indonesia.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/e801ed91aad54296237ae4e63a47d18e77caa4ae-2000x3000.jpg",
+    instagram: "https://www.instagram.com/antarikshdaddy/"
+  },
+  "Sahaja": {
+    bio: "Sahaja creates multilingual spiritual folk music blending Punjabi, Urdu, and Hindi poetry with dotara, saxophone, ney, and percussion. The ensemble addresses ecological grief and disconnection through Sufi philosophy and folk wisdom, merging contemplative and movement-based expression.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/bb07f074522042bbda532ca48310e04e5de358ca-3782x5780.jpg",
+    instagram: null
+  },
+  "sudan": {
+    bio: "Pritpal Sudan is a 23-year-old producer, songwriter, and multi-instrumentalist from Mumbai. His acclaimed 13-track debut album \u201csudan?\u201d showcases his genre-fluid sound across downtempo and dancefloor styles. Rolling Stone India described him as a \u201cquiet force building a creative empire.\u201d",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/30061669b92e91f99b59300b437d35423acbc4eb-3000x3000.jpg",
+    instagram: "https://www.instagram.com/notsudan"
+  },
+  "Rounak Maiti": {
+    bio: "Rounak Maiti is a self-produced artist from India whose work spans singer-songwriting, multi-instrumentalism, and production. A founding member of audiovisual collective EXCISE DEPT and LA-based indie trio Small Forward. In 2025, he released \u201cBrute Fact/Home Truth,\u201d exploring electronic and rock music.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/33d4aed8ead529177a72e9b55d3bee915bf56529-2001x2500.jpg",
+    instagram: "https://www.instagram.com/rounakmaiti/"
+  },
+  "Ranj x Clifr": {
+    bio: "Ranj x Clifr is an R&B duo creating multi-genre music that blends space pop, house, hip-hop, and jazz influences. The pair evolved from their work in Carnatic fusion band Kelvikkuri, with releases including the album \u201cAntihero\u201d and EP \u201cPlay Me!\u201d",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/3e3155f9cc2ea0a6ec9a541d6d5d8b5b224c3f1a-2000x2500.jpg",
+    instagram: "https://www.instagram.com/ranjxclifr/"
+  },
+  "Vieux Farka Tour\u00e9": {
+    bio: "Often referred to as \u2018The Hendrix of the Sahara\u2019, Vieux Farka Tour\u00e9 is the son of legendary Malian guitarist Ali Farka Tour\u00e9. He has become a prominent voice in contemporary Malian music, collaborating with Khruangbin, Derek Trucks, and John Scofield.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/6f79006a21343aca686f3da2cc683084286ef9b4-3840x4800.jpg",
+    instagram: "https://www.instagram.com/vieuxfarkatoure/"
+  },
+  "Fringe Mechanics": {
+    bio: "Bhavya Singh, performing as Fringe Mechanics from New Delhi, resists genre classification through a selector\u2019s approach prioritizing texture over categories. A regular at Delhi\u2019s Medium Rare gatherings, curating acid-laced grooves and psychedelic textures grounded in balearic aesthetics.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/de744371c039d581edeeac0e47361f97abf95eed-631x982.jpg",
+    instagram: "https://www.instagram.com/fringe.mechanics/"
+  },
+  "DITA": {
+    bio: "Born in New Delhi, DITA started DJ-ing in 2014 in Indonesia, where the diversity of Indonesian music culture pushed her to dig deeper into her own sound. Known for contagious selections spanning Proto-House, 90s breaks, Balearic and beyond.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/4698a0def74340e51c3e4e037710f28d45db2938-2000x2500.jpg",
+    instagram: "https://www.instagram.com/ditapws/"
+  },
+  "Emel x Ouissam": {
+    bio: "Emel Rowe is a Filipino-Australian DJ, party polymath, and vibe manager. Co-founder of UNKNWN, CC:Concepts and Manila Community Radio in the Philippines. From closing Equation Festival to hosting events across the archipelago, Rowe shares special moments on and off the floor.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/7bd7cd2fa667d6bd7d01ceb3068c94fe9a115b9a-4160x6240.jpg",
+    instagram: "https://www.instagram.com/emel.onlyjams/"
+  },
+  "Mafalda": {
+    bio: "Mafalda has a motto: only play the records you really, really love. The Portuguese DJ crafts diverse sets spanning soul, gospel, jazz, house, R&B, and Brazilian rarities. She\u2019s earned recognition opening for Madlib, performing Boiler Room sessions, and appearing at Glastonbury and Primavera.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/d5e01bc7614e6ed05c5340747857a423a1337ea8-2000x2501.jpg",
+    instagram: "https://www.instagram.com/mafaldafromthesun/"
+  },
+  "Squidworks": {
+    bio: "Squidworks is the alias of Varoon Nair from Goa. His electronic sound draws from Four Tet, Burial, Mount Kimbie and Joy Orbison. DJ sets blend UK Funky, garage, house, breaks and techno, characterized by rhythmic, soulful energy and meticulous selection.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/1ef03c881b1e78ddfc0e881f47a6f55b3fde4596-2000x2588.jpg",
+    instagram: "https://www.instagram.com/squidworks/"
+  },
+  "Elias Mazian": {
+    bio: "DJ, producer and singer Elias Mazian is a firm fixture of the club circuit in Amsterdam and beyond. His DJ sets are never predictable, with house music forming a base to deviate into jungle, techno or a classic pop song. Former Trouw and De School resident.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/12f2d30f5e95f0860a688d87710d8fcd015e3a9b-3798x4747.jpg",
+    instagram: "https://www.instagram.com/eliasmazian/"
+  },
+  "Fursat FM": {
+    bio: "Fursat FM has been releasing music quietly since 2018. What started as a low-key, exploratory outlet has grown into a deeper practice rooted in slowness and sustained listening. Creating sonic landscapes through field recordings, ambient music, noise, and clarinet improvisations.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/09bbe95987fe4f5056ffb72ca2819c7244c4035d-680x886.jpg",
+    instagram: "https://www.instagram.com/fursat_fm/"
+  },
+  "Akanbi": {
+    bio: "Raised in Lagos, Nigeria, Akanbi moved to NYC in 2010 and immersed himself in every corner of dance music, as a serious dancer and eventually a DJ and rave activator. He brings careful intention to his DJ work while tapping into deeper spiritual frequencies.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/95f2f436a3f99aaae62386cffb5b6e2c80c405c2-2403x3004.jpg",
+    instagram: "https://www.instagram.com/frikaan_time/"
+  },
+  "Kia": {
+    bio: "Kia is a DJ, curator, and label boss based in Melbourne running Animalia and Cirrus labels. Mixmag named her among DJs defining 2025. Known for weaving atmospheric and psychedelic sounds into immersive, pulsating worlds.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/5f6577d174dee5f833391ddae0375e98b215f4bf-2000x2500.jpg",
+    instagram: "https://www.instagram.com/kiasvs/"
+  },
+  "Barker (Live)": {
+    bio: "British-born, Berlin-based Sam Barker pushes the boundaries of electronic music in and out of the club. Releases on Ostgut Ton and Smalltown Supersound. His practice extends into sound installations and instrument design, with works shown at Berghain\u2019s Studio Berlin.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/c49aa11d88a6587cf5d9e93578d1eca7953cfb27-7377x9221.jpg",
+    instagram: "https://www.instagram.com/barker_volteklabs/"
+  },
+  "Maze": {
+    bio: "Maze is a purveyor of energetic journeys through spacey prog and deep grooves, rooted in slammin\u2019 underground house for 20 years. She draws inspiration from queer dancefloor culture, with releases on Permanent Vacation and Turnland, and regular performances at Panorama Bar.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/40631f3d9b9ad84dedc4881e43f9557f02f37e84-2426x2580.jpg",
+    instagram: "https://www.instagram.com/veritymaze"
+  },
+  "Jogita": {
+    bio: "Jogita is a New Delhi-based DJ and vinyl enthusiast from Imphal, Manipur. She curates sets blending rare grooves, forgotten gems, and contemporary releases. Her philosophy centers on storytelling through records. She actively promotes women\u2019s inclusion in vinyl culture.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/356e21f2d8fa5bbbb6d1a626efbefbaea41a71ec-2000x2286.jpg",
+    instagram: "https://www.instagram.com/jo.gi.ta_/"
+  },
+  "No Plastic": {
+    bio: "George Patrick (aka No Plastic) is the co-founder of Refuge Worldwide, a radio station, cultural platform and event space in Berlin. Originally from Glasgow. His DJ sets span dub, dancehall, disco, street soul, and jukebox classics.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/74f4f8469ca4c89c86d9d20b5c882159f0bf6f52-1970x2433.jpg",
+    instagram: "https://www.instagram.com/refugeworldwide"
+  },
+  "The Art of Qawwali": {
+    bio: "Having its roots in Sufi Mystic music, Qawwali has evolved into a highly complex and yet cherished genre all over the world. This project, curated by Nusrat Apoorv, aims to revive the centuries-old tradition in its authentic form, blending philosophy, linguistics, poetry, and storytelling.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/558166ea74d7a9158bd08c19f0965d2689f59d25-1280x720.jpg",
+    instagram: "https://www.instagram.com/theartofqawwali/"
+  },
+  "Karshni": {
+    bio: "Karshni is a songwriter-producer blending folk sensibilities, experimental form and intentional arrangements with ruthless candour. She premieres her debut album \u2018Buck Wild\u2019 as a full-band performance\u2014urgent, precise, and alive.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/b44accf70aeb1f8f1aef631cd8b942e729b16183-4000x5098.jpg",
+    instagram: "https://www.instagram.com/karshninair/"
+  },
+  "Whyte": {
+    bio: "Whyte is an independent artist based in Taiwan who transitioned from medical school to music. Her style blends neo-soul with jazz and lo-fi hip-hop, characterized by husky, sultry vocals influenced by Billie Holiday and Amy Winehouse.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/e677e37b44c6d4919a05a9de5a63e776244e3293-5179x7769.jpg",
+    instagram: "https://www.instagram.com/whytetete/"
+  },
+  "Curtain Blue Presents 'Kesar'": {
+    bio: "Curtain Blue is the moniker of New Delhi-based singer-producer Abhishek Bhatia, known for blending haunting vocals with electronica, live brass, and Indian textures. For Nomads, he debuts his latest record \u2018Kesar.\u2019",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/5c0f289d985402e82a32a324c8bb099b087ec717-1066x1600.jpg",
+    instagram: "https://www.instagram.com/curtainblue/"
+  },
+  "Auntie Flo (Full Live Band)": {
+    bio: "Brian d\u2019Souza\u2019s Auntie Flo live band brings together musicians from around the world to perform tracks spanning five acclaimed albums. Over 15 years, they\u2019ve earned recognition for taking World Music into the future.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/2ee1afddac3e55747eea28c8059a402ae3efdd07-2736x3172.jpg",
+    instagram: "https://www.instagram.com/auntie._.flo/"
+  },
+  "Auntie Flo (DJ)": {
+    bio: "Brian d\u2019Souza\u2019s Auntie Flo live band brings together musicians from around the world to perform tracks spanning five acclaimed albums. Over 15 years, they\u2019ve earned recognition for taking World Music into the future.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/2ee1afddac3e55747eea28c8059a402ae3efdd07-2736x3172.jpg",
+    instagram: "https://www.instagram.com/auntie._.flo/"
+  },
+  "1-800 GIRLS (DJ)": {
+    bio: "A name synonymous with emotionally charged, forward-thinking electronic music, DJ and producer Jake Stewart aka 1-800 GIRLS blurs lines between nostalgia, euphoric electronics, and club energy. BBC Radio 6 Music supported.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/df7c9cee5a3cace49b4c814d0cb5016a5a5cabbf-6336x9504.jpg",
+    instagram: "https://www.instagram.com/1_800girls/"
+  },
+  "1-800 GIRLS (Live)": {
+    bio: "A name synonymous with emotionally charged, forward-thinking electronic music, DJ and producer Jake Stewart aka 1-800 GIRLS brings a special live set to Khetri. Blurring lines between nostalgia, euphoric electronics, and club energy.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/df7c9cee5a3cace49b4c814d0cb5016a5a5cabbf-6336x9504.jpg",
+    instagram: "https://www.instagram.com/1_800girls/"
+  },
+  "Direct Drive x Jay Drive": {
+    bio: "Direct Drive is a sonic entity from Delhi spreading the power of sonic expression through vinyl-only and digital formats. Actively pushing house, techno, contemporary jazz, dub, and global grooves to facilitate alternative sonic environments and dance floors.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/835d1a5c802073e827bb66e20e430ea54c68dca1-1280x1921.jpg",
+    instagram: "https://www.instagram.com/directdrive___/"
+  },
+  "Girls Night Out": {
+    bio: "Girls Night Out is the shape Vijayant Singh\u2019s dance music dreams take. The Delhi local delivers uncompromising dancefloor punches with sets that are uplifting, distinct and diverse\u2014deriving heavily from house, techno, disco, acid, and more.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/eac7a0e40d7aca52ed8256750758fbb45cf971d1-2000x2258.jpg",
+    instagram: null
+  },
+  "DJ SWISHA": {
+    bio: "Rooted in Philadelphia, sharpened in Los Angeles, and now embedded in Brooklyn\u2019s club ecosystem, DJ Swisha is known for his high-octane, cross-genre approach blending footwork, jungle, house, Jersey and Baltimore club styles with polyrhythmic sensibility.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/b4a198365be51431c709f3f6ee9beb277e9379a7-2000x2500.jpg",
+    instagram: "https://www.instagram.com/djswisha"
+  },
+  "pause.dxa": {
+    bio: "pause.dxa is an experimental sound project by Sahitya and Harsh based in Auroville. The duo merges traditional sound practices with modern approaches, combining Dhrupad vocal improvisation with electronic soundscapes, drones, modular synthesis, and field recordings.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/2c5298b5b7bd7c7b4896b76b818c72c5c1bc7670-2581x3024.jpg",
+    instagram: "https://www.instagram.com/pause.dxa/"
+  },
+  "Shantam (Live)": {
+    bio: "Shantam is a Goa-based producer crafting genre-defying breaks techno. Known for his dynamic range and deeply experimental approach, he exclusively plays his own original tracks, bringing a fresh and personal touch to every performance.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/012d105b787824a3bea02eb7e6b67a33af71b750-3396x4024.jpg",
+    instagram: "https://www.instagram.com/shantamkhanna/"
+  },
+  "SSIEGE (Live)": {
+    bio: "SSIEGE is a portal to a dream world drawing upon shyness, memory, adolescence and dreams. The artist explores melancholic reflections on youth through ambient soundscapes infused with dub elements. Notable releases include \u2018Meteora\u2019 on Knekelhuis.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/5e97de6e92f2e973b78f41edcdc66017f25d7d44-1989x3000.jpg",
+    instagram: "https://www.instagram.com/giesse999/"
+  },
+  "Tyrell Dub Corp (Live)": {
+    bio: "Tyrell Dub Corp traces the journey of Jamaican sound system culture to modern day dub techno and bass music. Firmly rooted in dub and reggae, paying homage to techniques pioneered by King Tubby and Scientist.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/72feb768d9e52d4cbdaa210b713974495f49426a-2500x3199.jpg",
+    instagram: null
+  },
+  "moktar": {
+    bio: "moktar is a DJ and producer combining club and techno with traditional Arabic instrumentation, emphasising his Egyptian-Australian background. Signed to Steel City Dance Discs, his releases explore techno and IDM through Arabic percussion.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/c785fc3c1e0d36812aebf24342e60a329a39992d-3602x5397.jpg",
+    instagram: "https://www.instagram.com/moktarmusic/"
+  },
+  "JBABE": {
+    bio: "JBABE is the solo project of songwriter-composer Josh Fernandez, known as the guitarist and vocalist of Chennai band The F16s. Capturing slacker rock, glam funk and synth-pop ballads with indulgent, tender-hearted cynicism.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/431972d6363b64e17243db275337b79672331e02-2000x2000.jpg",
+    instagram: "https://www.instagram.com/joshurbanned/"
+  },
+  "Jal, Jungle, Zameen: Elsewhere In India (Debut)": {
+    bio: "Murthovic and Thiruda lead \u2018Elsewhere in India\u2019, a collaborative electronica and transmedia project uniting artists, technologists, and cultural preservationists. A 60-minute live performance excavating Indian ecological heritage through sound and immersive digital environments with Rajasthan\u2019s hereditary musician communities.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/44627cad0fd6d95575449f35150d309e83130643-3000x2000.jpg",
+    instagram: "https://www.instagram.com/elsewhereinindia/"
+  },
+  "Rival Consoles (Live AV)": {
+    bio: "Ryan Lee West (Rival Consoles) is one of the UK\u2019s most influential creators of electronic music. His new audio-visual show centers on the album \u2018Landscape from Memory\u2019, spanning 15 years of material with visuals by Sky Ainsbury. London-based, releases on Erased Tapes.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/1f86de5435029652f36647a2143bed8ec8ce85ad-2500x2500.jpg",
+    instagram: "https://www.instagram.com/rivalconsoles"
+  },
+  "Tonkatsukitty": {
+    bio: "Bangalore-based Tonkatsukitty started digging deep as a teen, then found home on dark dancefloors in Vietnam before jumping from dancer to DJ. Her sound spans house, breaks, minimal techno and ambient\u2014always deep, dubby and minimal, evoking tucked-away moods.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/ed1eeac618447376be4b3f81fb5681b0be6506f9-2000x2500.jpg",
+    instagram: "https://www.instagram.com/tonkatsukitty/"
+  },
+  "Zokhuma": {
+    bio: "Zokhuma is a DJ and producer thriving in the balance between calm and chaos. Inspired by heavy metal roots and a decade immersed in dance music, he envelopes the dance floor in hypnotic trance with atmospheric, high-energy and euphoric sounds.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/97608c8a844a76aa7df30c5cdad137ebb8debf8b-2398x3000.jpg",
+    instagram: "https://www.instagram.com/zokhuma/"
+  },
+  "D. Tiffany": {
+    bio: "Canada\u2019s sapphic shapeshifter D. Tiffany has been causing waves for over a decade, currently residing in Berlin. She spearheads Delicate Records, Plush Records Inc, Planet Euphorique and more. A prolific producer, deeply daring deejay, mover, shaker and tastemaker of the underground.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/42fbb97dd932ed4dd6fcf2cef58c3726b94ccb79-3120x3744.jpg",
+    instagram: "https://www.instagram.com/dtiff_/"
+  },
+  "Sunju Hargun (B-Side)": {
+    bio: "Free spirit Sunju Hargun\u2019s sound spans a wide spectrum of techno moving through psychedelic passages. Co-founder of Siamese Twins Records, he\u2019s appeared at Panorama Bar, Dekmantel, Houghton, and Magnetic Fields. His DJ sets feel like there is always more to uncover.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/6b9a835135aca08148219b3d2da125e1d04479b9-2000x3000.jpg",
+    instagram: "https://www.instagram.com/sunjuhargun"
+  },
+  "Daisy Moon": {
+    bio: "Daisy Moon is a Bristol-based DJ and producer balancing head-twisting sonics and heart-rending charm. Production ranges from high-energy peak-time tracks to experimental work on Peach Discs. DJ sets emphasize uptempo energy across diverse dance music.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/87d017d198b0de1b7986c10b3038d3c3b6be64e4-5304x7952.jpg",
+    instagram: "https://www.instagram.com/daisymoons/"
+  },
+  "Majestic 88": {
+    bio: "Majestic 88 is the alias of Ravi Rajpal, nightlife consultant and creative force behind Disco>ery. An excavator of sonic treasures, possessing an uncanny ability to unearth hidden gems from the depths of the music underworld.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/a258a5b24af2476f69b7d3f252bd39b4876d26ff-1080x1350.png",
+    instagram: "https://www.instagram.com/raviediscovery/"
+  },
+  "FILM (Live)": {
+    bio: "FILM a.k.a. Sanil Sudan is a New Delhi-based DJ, producer and former curator at the capital\u2019s electronic music mainstays. His self-titled debut album is a cohesive 52 minutes of ambient pads, zig-lining techno and old-school breaks.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/0249d1adf3dcbef209c8eb97c17fea0bc3f35a6d-3996x4000.jpg",
+    instagram: "https://www.instagram.com/film011/"
+  },
+  "Yakh Basta": {
+    bio: "Yakh Basta is a 3-hour live performance blending ambient electronic music with live trumpet, bass, vocals, and cinematic guitars. The ensemble creates contemplative morning performances with all-analog synths, processed brass, and original Urdu-Sanskrit poetry.",
+    image: "https://cdn.sanity.io/images/zi6uwvn4/production/5e220abc5b017569f40af3d13ba6e8d0b4ab5732-3024x4032.jpg",
+    instagram: null
+  },
+  "Puqaar Diaries 2: Screening & Conversation": {
+    bio: "A screening and conversation event as part of the Puqaar Diaries series at Magnetic Fields Nomads.",
+    image: null,
+    instagram: null
+  },
+  "In Tune: Live Inter-Traditional Jam": { bio: "A live inter-traditional jam session as part of the In Tune panel series.", image: null, instagram: null },
+  "In Tune: Folk & Futurism": { bio: "A panel discussion exploring the intersection of folk traditions and futurism.", image: null, instagram: null },
+  "In Tune: Trends For 2026": { bio: "A panel discussion on emerging music trends for 2026.", image: null, instagram: null },
+  "In Tune: Influences": { bio: "A panel discussion exploring musical influences across genres and cultures.", image: null, instagram: null },
+  "In Tune: The Sound Of Belonging": { bio: "A panel discussion on music, identity, and the sound of belonging.", image: null, instagram: null },
+};
+
+function sanityThumb(url, w) {
+  if (!url) return "";
+  return url + `?w=${w}&h=${w}&fit=crop&auto=format`;
+}
+
 const SCHEDULE = {
   fri: [
     { artist: "Antariksh Daddy", start: "12:00", end: "14:00", venue: "easy-picnic" },
@@ -344,7 +670,7 @@ const SCHEDULE = {
     { artist: "sudan", start: "18:00", end: "18:45", venue: "puqaar" },
     { artist: "Rounak Maiti", start: "19:00", end: "20:00", venue: "puqaar" },
     { artist: "Ranj x Clifr", start: "20:15", end: "21:15", venue: "puqaar" },
-    { artist: "Vieux Farka Touré", start: "21:30", end: "22:30", venue: "puqaar" },
+    { artist: "Vieux Farka Tour\u00e9", start: "21:30", end: "22:30", venue: "puqaar" },
     { artist: "Fringe Mechanics", start: "20:00", end: "23:00", venue: "west-stage" },
     { artist: "DITA", start: "23:00", end: "02:00", venue: "west-stage" },
     { artist: "Emel x Ouissam", start: "02:00", end: "05:00", venue: "west-stage" },
@@ -406,22 +732,18 @@ const SCHEDULE = {
 
 const STORAGE_KEY = "mf-nomads-2026-selections";
 const DAY_DATES = { fri: "2026-02-13", sat: "2026-02-14", sun: "2026-02-15" };
-
 const TIMELINE_START = 11;
 const TIMELINE_END_NEXT = 6;
 const TOTAL_HOURS = (24 - TIMELINE_START) + TIMELINE_END_NEXT;
 const PX_PER_HOUR = 120;
+const TIMELINE_START_MINS = TIMELINE_START * 60;
 
 function eventId(day, i) { return `${day}-${i}`; }
-
 function loadSelections() {
   try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")); }
   catch { return new Set(); }
 }
-
-function saveSelections(sel) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...sel]));
-}
+function saveSelections(sel) { localStorage.setItem(STORAGE_KEY, JSON.stringify([...sel])); }
 
 let selections = loadSelections();
 let filterMode = "all";
@@ -432,27 +754,19 @@ function timeToMinutes(t) {
   if (h < TIMELINE_START) mins += 24 * 60;
   return mins;
 }
-
-const TIMELINE_START_MINS = TIMELINE_START * 60;
-
-function minutesToPx(mins) {
-  return ((mins - TIMELINE_START_MINS) / 60) * PX_PER_HOUR;
-}
+function minutesToPx(mins) { return ((mins - TIMELINE_START_MINS) / 60) * PX_PER_HOUR; }
 
 function fmt12(t) {
   const [h, m] = t.split(":").map(Number);
   const suffix = h >= 12 && h < 24 ? "PM" : "AM";
-  const h12 = h % 12 || 12;
-  return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
+  return `${h % 12 || 12}:${m.toString().padStart(2, "0")} ${suffix}`;
 }
 
 function timeLabels() {
   const labels = [];
   for (let i = 0; i < TOTAL_HOURS; i++) {
     const h = (TIMELINE_START + i) % 24;
-    const suffix = h >= 12 && h < 24 ? "PM" : "AM";
-    const h12 = h % 12 || 12;
-    labels.push(`${h12}:00 ${suffix}`);
+    labels.push(`${h % 12 || 12}:00 ${h >= 12 && h < 24 ? "PM" : "AM"}`);
   }
   return labels;
 }
@@ -473,7 +787,6 @@ function renderTimeline(day) {
   const events = SCHEDULE[day];
   const venues = venuesForDay(day);
   const labels = timeLabels();
-  const totalW = TOTAL_HOURS * PX_PER_HOUR;
 
   const venueEvents = new Map();
   events.forEach((ev, i) => {
@@ -483,34 +796,21 @@ function renderTimeline(day) {
     venueEvents.get(ev.venue).push({ ...ev, idx: i });
   });
 
-  const filteredVenues = filterMode === "selected"
-    ? venues.filter(v => venueEvents.has(v.id))
-    : venues;
-
+  const filteredVenues = filterMode === "selected" ? venues.filter(v => venueEvents.has(v.id)) : venues;
   if (filterMode === "selected" && filteredVenues.length === 0) {
     return `<div class="empty-state">No starred sets for this day</div>`;
   }
 
   const cols = `var(--venue-w) repeat(${TOTAL_HOURS}, var(--hour-w))`;
   const rows = `auto repeat(${filteredVenues.length}, var(--row-h))`;
-
   let html = `<div class="timeline" style="grid-template-columns:${cols}; grid-template-rows:${rows};">`;
-
   html += `<div class="timeline-corner"></div>`;
-  for (const label of labels) {
-    html += `<div class="time-label">${label}</div>`;
-  }
+  for (const label of labels) html += `<div class="time-label">${label}</div>`;
 
   filteredVenues.forEach((v) => {
     html += `<div class="venue-label">${v.name}</div>`;
-
     for (let c = 0; c < TOTAL_HOURS; c++) {
-      html += `<div class="venue-track-cell"`;
-      if (c === 0) {
-        html += ` style="position:relative;"`;
-      }
-      html += `>`;
-
+      html += `<div class="venue-track-cell"${c === 0 ? ' style="position:relative;"' : ''}>`;
       if (c === 0) {
         const evts = venueEvents.get(v.id) || [];
         for (const ev of evts) {
@@ -521,15 +821,13 @@ function renderTimeline(day) {
           const id = eventId(day, ev.idx);
           const sel = selections.has(id) ? " selected" : "";
           const tagHtml = ev.tag ? `<span class="ev-tag">${ev.tag}</span>` : "";
-
-          html += `<div class="event-block${sel}" data-id="${id}" style="left:${left}px; width:${width}px;" title="${ev.artist} — ${fmt12(ev.start)} – ${fmt12(ev.end)}">`;
+          html += `<div class="event-block${sel}" data-id="${id}" data-artist="${ev.artist.replace(/"/g, '&quot;')}" style="left:${left}px; width:${width}px;" title="${ev.artist} \u2014 ${fmt12(ev.start)} \u2013 ${fmt12(ev.end)}">`;
           html += `<span class="ev-name">${ev.artist}</span>`;
-          html += `<span class="ev-time">${fmt12(ev.start)} – ${fmt12(ev.end)}</span>`;
+          html += `<span class="ev-time">${fmt12(ev.start)} \u2013 ${fmt12(ev.end)}</span>`;
           html += tagHtml;
           html += `</div>`;
         }
       }
-
       html += `</div>`;
     }
   });
@@ -552,6 +850,86 @@ function render() {
   updateCounts();
 }
 
+// Artist panel
+let currentPanelId = null;
+
+function openPanel(artistName, evId) {
+  const info = ARTISTS[artistName];
+  if (!info) return;
+  currentPanelId = evId;
+  const panel = document.getElementById("artist-panel");
+  const overlay = document.getElementById("panel-overlay");
+
+  document.getElementById("panel-img").src = info.image ? sanityThumb(info.image, 840) : "";
+  document.getElementById("panel-img").style.display = info.image ? "block" : "none";
+  document.getElementById("panel-name").textContent = artistName;
+  document.getElementById("panel-name").className = "panel-artist-name" + (selections.has(evId) ? " is-selected" : "");
+
+  const ev = findEvent(evId);
+  const venueName = ev ? VENUES.find(v => v.id === ev.venue)?.name : "";
+  const dayLabel = evId.startsWith("fri") ? "Fri Feb 13" : evId.startsWith("sat") ? "Sat Feb 14" : "Sun Feb 15";
+  document.getElementById("panel-meta").textContent = ev ? `${dayLabel} \u00b7 ${fmt12(ev.start)} \u2013 ${fmt12(ev.end)} \u00b7 ${venueName}` : "";
+
+  document.getElementById("panel-bio").textContent = info.bio;
+
+  const linksEl = document.getElementById("panel-links");
+  linksEl.innerHTML = "";
+  if (info.instagram) {
+    const a = document.createElement("a");
+    a.className = "panel-link";
+    a.href = info.instagram;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "Instagram";
+    linksEl.appendChild(a);
+  }
+  const mfLink = document.createElement("a");
+  mfLink.className = "panel-link";
+  mfLink.href = `https://nomads.magneticfields.in/artists/${artistName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/-+$/, "")}`;
+  mfLink.target = "_blank";
+  mfLink.rel = "noopener";
+  mfLink.textContent = "Nomads page";
+  linksEl.appendChild(mfLink);
+
+  updatePanelStar();
+  panel.classList.add("open");
+  overlay.classList.add("open");
+}
+
+function findEvent(evId) {
+  const [day, idx] = evId.split("-");
+  return SCHEDULE[day]?.[parseInt(idx)];
+}
+
+function updatePanelStar() {
+  const btn = document.getElementById("panel-star");
+  const isSel = selections.has(currentPanelId);
+  btn.textContent = isSel ? "Starred" : "Star this set";
+  btn.className = "panel-star-btn" + (isSel ? " is-selected" : "");
+  document.getElementById("panel-name").className = "panel-artist-name" + (isSel ? " is-selected" : "");
+}
+
+function closePanel() {
+  document.getElementById("artist-panel").classList.remove("open");
+  document.getElementById("panel-overlay").classList.remove("open");
+  currentPanelId = null;
+}
+
+document.getElementById("panel-close").addEventListener("click", closePanel);
+document.getElementById("panel-overlay").addEventListener("click", closePanel);
+
+document.getElementById("panel-star").addEventListener("click", () => {
+  if (!currentPanelId) return;
+  if (selections.has(currentPanelId)) selections.delete(currentPanelId);
+  else selections.add(currentPanelId);
+  saveSelections(selections);
+  updatePanelStar();
+  const block = document.querySelector(`.event-block[data-id="${currentPanelId}"]`);
+  if (block) block.classList.toggle("selected", selections.has(currentPanelId));
+  updateCounts();
+});
+
+// Event handlers
 document.getElementById("schedule-container").addEventListener("click", (e) => {
   const block = e.target.closest(".event-block");
   if (!block) return;
@@ -559,14 +937,36 @@ document.getElementById("schedule-container").addEventListener("click", (e) => {
   if (selections.has(id)) selections.delete(id);
   else selections.add(id);
   saveSelections(selections);
-
-  if (filterMode === "selected") {
-    render();
-  } else {
-    block.classList.toggle("selected");
-    updateCounts();
-  }
+  if (filterMode === "selected") { render(); }
+  else { block.classList.toggle("selected"); updateCounts(); }
 });
+
+document.getElementById("schedule-container").addEventListener("contextmenu", (e) => {
+  const block = e.target.closest(".event-block");
+  if (!block) return;
+  e.preventDefault();
+  openPanel(block.dataset.artist, block.dataset.id);
+});
+
+// Long press for mobile
+let longPressTimer = null;
+let longPressTriggered = false;
+document.getElementById("schedule-container").addEventListener("touchstart", (e) => {
+  const block = e.target.closest(".event-block");
+  if (!block) return;
+  longPressTriggered = false;
+  longPressTimer = setTimeout(() => {
+    longPressTriggered = true;
+    openPanel(block.dataset.artist, block.dataset.id);
+  }, 500);
+}, { passive: true });
+document.getElementById("schedule-container").addEventListener("touchend", (e) => {
+  clearTimeout(longPressTimer);
+  if (longPressTriggered) { e.preventDefault(); }
+});
+document.getElementById("schedule-container").addEventListener("touchmove", () => {
+  clearTimeout(longPressTimer);
+}, { passive: true });
 
 document.querySelector(".day-tabs").addEventListener("click", (e) => {
   const tab = e.target.closest(".day-tab");
@@ -601,14 +1001,9 @@ document.getElementById("clear-btn").addEventListener("click", () => {
 
 document.getElementById("export-ics").addEventListener("click", () => {
   const lines = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//MF Nomads Picker//EN",
-    "CALSCALE:GREGORIAN",
-    "X-WR-CALNAME:My Magnetic Fields Nomads 2026",
-    "X-WR-TIMEZONE:Asia/Kolkata",
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MF Nomads Picker//EN",
+    "CALSCALE:GREGORIAN", "X-WR-CALNAME:My Magnetic Fields Nomads 2026", "X-WR-TIMEZONE:Asia/Kolkata",
   ];
-
   let i = 0;
   for (const day of ["fri", "sat", "sun"]) {
     SCHEDULE[day].forEach((ev, idx) => {
@@ -616,39 +1011,18 @@ document.getElementById("export-ics").addEventListener("click", () => {
       const baseDate = DAY_DATES[day];
       const [sh, sm] = ev.start.split(":").map(Number);
       const [eh, em] = ev.end.split(":").map(Number);
-
       const startDate = new Date(`${baseDate}T00:00:00+05:30`);
       if (sh < 11) startDate.setDate(startDate.getDate() + 1);
       startDate.setHours(sh, sm, 0);
-
       const endDate = new Date(`${baseDate}T00:00:00+05:30`);
       if (eh < 11) endDate.setDate(endDate.getDate() + 1);
       endDate.setHours(eh, em, 0);
-
-      const fmt = (d) => {
-        const y = d.getFullYear();
-        const mo = String(d.getMonth() + 1).padStart(2, "0");
-        const da = String(d.getDate()).padStart(2, "0");
-        const h = String(d.getHours()).padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        return `${y}${mo}${da}T${h}${mi}00`;
-      };
-
+      const fmt = (d) => `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}T${String(d.getHours()).padStart(2,"0")}${String(d.getMinutes()).padStart(2,"0")}00`;
       const venueName = VENUES.find(v => v.id === ev.venue)?.name || "";
       const esc = (s) => s.replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;");
-
-      lines.push(
-        "BEGIN:VEVENT",
-        `UID:mfpick-${i++}@nomads`,
-        `DTSTART;TZID=Asia/Kolkata:${fmt(startDate)}`,
-        `DTEND;TZID=Asia/Kolkata:${fmt(endDate)}`,
-        `SUMMARY:${esc(ev.artist)}`,
-        `LOCATION:${esc(venueName)} - Magnetic Fields Nomads`,
-        "END:VEVENT"
-      );
+      lines.push("BEGIN:VEVENT", `UID:mfpick-${i++}@nomads`, `DTSTART;TZID=Asia/Kolkata:${fmt(startDate)}`, `DTEND;TZID=Asia/Kolkata:${fmt(endDate)}`, `SUMMARY:${esc(ev.artist)}`, `LOCATION:${esc(venueName)} - Magnetic Fields Nomads`, "END:VEVENT");
     });
   }
-
   lines.push("END:VCALENDAR");
   const blob = new Blob([lines.join("\r\n") + "\r\n"], { type: "text/calendar" });
   const a = document.createElement("a");

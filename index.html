@@ -1377,13 +1377,8 @@
         currentPanelId = evId;
         const panel = document.getElementById("artist-panel");
         const overlay = document.getElementById("panel-overlay");
+        const imgEl = document.getElementById("panel-img");
 
-        document.getElementById("panel-img").src = info.image
-          ? sanityThumb(info.image, 840)
-          : "";
-        document.getElementById("panel-img").style.display = info.image
-          ? "block"
-          : "none";
         document.getElementById("panel-name").textContent = artistName;
         document.getElementById("panel-name").className =
           "panel-artist-name" + (selections.has(evId) ? " is-selected" : "");
@@ -1424,8 +1419,33 @@
         linksEl.appendChild(mfLink);
 
         updatePanelStar();
-        panel.classList.add("open");
-        overlay.classList.add("open");
+
+        const thumbUrl = info.image ? sanityThumb(info.image, 840) : "";
+        if (!thumbUrl) {
+          imgEl.style.display = "none";
+          imgEl.src = "";
+          panel.classList.add("open");
+          overlay.classList.add("open");
+          return;
+        }
+
+        if (imgEl.src === thumbUrl) {
+          imgEl.style.display = "block";
+          panel.classList.add("open");
+          overlay.classList.add("open");
+          return;
+        }
+
+        imgEl.style.display = "block";
+        const preload = new Image();
+        const show = () => {
+          imgEl.src = thumbUrl;
+          panel.classList.add("open");
+          overlay.classList.add("open");
+        };
+        preload.onload = show;
+        preload.onerror = show;
+        preload.src = thumbUrl;
       }
 
       function findEvent(evId) {

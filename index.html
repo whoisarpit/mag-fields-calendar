@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magnetic Fields Nomads 2026 - Schedule Picker</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #5a6345;
+  --bg-dark: #4a5238;
+  --text: #f0ece4;
+  --text-dim: #c0bdb5;
+  --selected: #e8c547;
+  --selected-bg: rgba(232, 197, 71, 0.18);
+  --selected-border: rgba(232, 197, 71, 0.6);
+  --border: rgba(240, 236, 228, 0.15);
+  --border-light: rgba(240, 236, 228, 0.07);
+  --card-bg: rgba(240, 236, 228, 0.06);
+  --card-hover: rgba(240, 236, 228, 0.1);
+  --venue-w: 160px;
+  --hour-w: 120px;
+  --row-h: 64px;
+}
+
+body {
+  font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+header {
+  padding: 1.5rem 1.5rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+header .dates {
+  font-size: 0.6rem;
+  font-weight: 300;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+}
+
+.toolbar-btn:hover { border-color: var(--text-dim); color: var(--text); }
+.toolbar-btn.active { border-color: var(--selected); color: var(--selected); }
+
+.toolbar-btn.accent {
+  border-color: var(--selected);
+  color: var(--selected);
+}
+.toolbar-btn.accent:hover { background: var(--selected); color: var(--bg-dark); }
+.toolbar-btn:disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+.count-badge {
+  font-size: 0.55rem;
+  color: var(--selected);
+  margin-left: 0.2rem;
+}
+
+.day-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+
+.day-tab {
+  flex: 1;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  padding: 0.6rem;
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-bottom: 2px solid transparent;
+  text-transform: uppercase;
+}
+
+.day-tab:hover { color: var(--text); }
+.day-tab.active { color: var(--text); border-bottom-color: var(--text); }
+
+.timeline-wrapper {
+  display: none;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.timeline-wrapper.active { display: block; }
+
+.timeline {
+  position: relative;
+  display: grid;
+  min-width: max-content;
+}
+
+.timeline-corner {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  width: var(--venue-w);
+  min-width: var(--venue-w);
+}
+
+.time-header-row {
+  display: contents;
+}
+
+.time-label {
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-align: left;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border-light);
+  white-space: nowrap;
+  min-width: var(--hour-w);
+  width: var(--hour-w);
+}
+
+.venue-row {
+  display: contents;
+}
+
+.venue-label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--bg);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border);
+  width: var(--venue-w);
+  min-width: var(--venue-w);
+  height: var(--row-h);
+  line-height: 1.3;
+}
+
+.venue-track {
+  position: relative;
+  border-bottom: 1px solid var(--border-light);
+  height: var(--row-h);
+}
+
+.venue-track-cell {
+  border-right: 1px solid var(--border-light);
+  height: var(--row-h);
+}
+
+.event-block {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 3px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0.4rem;
+  z-index: 1;
+}
+
+.event-block:hover {
+  background: var(--card-hover);
+  z-index: 2;
+}
+
+.event-block.selected {
+  background: var(--selected-bg);
+  border-color: var(--selected-border);
+}
+
+.event-block .ev-name {
+  font-size: 0.6rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  transition: color 0.15s ease;
+}
+
+.event-block.selected .ev-name {
+  color: var(--selected);
+}
+
+.event-block .ev-time {
+  font-size: 0.5rem;
+  font-weight: 300;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.event-block .ev-tag {
+  font-size: 0.45rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  font-weight: 300;
+  grid-column: 1 / -1;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.5rem;
+  color: var(--text-dim);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+}
+
+.now-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e05050;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.now-line::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e05050;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Magnetic Fields Nomads</h1>
+  <div class="dates">Feb 13 &ndash; 15, 2026 &middot; Khetri, Rajasthan</div>
+</header>
+
+<div class="toolbar">
+  <button class="toolbar-btn active" id="filter-all">All</button>
+  <button class="toolbar-btn" id="filter-selected">Starred<span class="count-badge" id="selected-count"></span></button>
+  <button class="toolbar-btn accent" id="export-ics" disabled>Export .ics</button>
+  <button class="toolbar-btn accent" id="clear-btn" disabled>Clear all</button>
+</div>
+
+<div class="day-tabs">
+  <button class="day-tab active" data-day="fri">Fri &mdash; Feb 13</button>
+  <button class="day-tab" data-day="sat">Sat &mdash; Feb 14</button>
+  <button class="day-tab" data-day="sun">Sun &mdash; Feb 15</button>
+</div>
+
+<div id="schedule-container"></div>
+
+<footer>Click an artist to star &middot; selections saved locally</footer>
+
+<script>
+const VENUES = [
+  { id: "easy-picnic", name: "Ray-Ban Easy Picnic" },
+  { id: "puqaar", name: "Ray-Ban Puqaar" },
+  { id: "west-stage", name: "Jameson Connects West Stage" },
+  { id: "corona-yurt", name: "Corona Yurt" },
+  { id: "budx-east", name: "BUDx East Stage" },
+  { id: "stepwell", name: "The Stepwell" },
+  { id: "jameson-club", name: "The Jameson Connects Club" },
+  { id: "sabha", name: "Sabha Bhavan" },
+];
+
+const SCHEDULE = {
+  fri: [
+    { artist: "Antariksh Daddy", start: "12:00", end: "14:00", venue: "easy-picnic" },
+    { artist: "Sahaja", start: "16:00", end: "18:00", venue: "easy-picnic" },
+    { artist: "sudan", start: "18:00", end: "18:45", venue: "puqaar" },
+    { artist: "Rounak Maiti", start: "19:00", end: "20:00", venue: "puqaar" },
+    { artist: "Ranj x Clifr", start: "20:15", end: "21:15", venue: "puqaar" },
+    { artist: "Vieux Farka Touré", start: "21:30", end: "22:30", venue: "puqaar" },
+    { artist: "Fringe Mechanics", start: "20:00", end: "23:00", venue: "west-stage" },
+    { artist: "DITA", start: "23:00", end: "02:00", venue: "west-stage" },
+    { artist: "Emel x Ouissam", start: "02:00", end: "05:00", venue: "west-stage" },
+    { artist: "Mafalda", start: "22:30", end: "00:30", venue: "corona-yurt" },
+    { artist: "Squidworks", start: "00:30", end: "02:00", venue: "corona-yurt" },
+    { artist: "Elias Mazian", start: "02:00", end: "03:30", venue: "corona-yurt" },
+    { artist: "Fursat FM", start: "22:30", end: "23:30", venue: "budx-east" },
+    { artist: "Akanbi", start: "23:30", end: "00:30", venue: "budx-east" },
+    { artist: "Kia", start: "00:30", end: "01:30", venue: "budx-east" },
+    { artist: "Barker (Live)", start: "01:30", end: "02:30", venue: "budx-east" },
+    { artist: "Maze", start: "02:30", end: "05:00", venue: "budx-east" },
+  ],
+  sat: [
+    { artist: "Jogita", start: "12:00", end: "15:00", venue: "easy-picnic" },
+    { artist: "No Plastic", start: "15:00", end: "18:00", venue: "easy-picnic" },
+    { artist: "The Art of Qawwali", start: "18:00", end: "20:00", venue: "puqaar" },
+    { artist: "Karshni", start: "18:00", end: "19:00", venue: "west-stage" },
+    { artist: "Whyte", start: "19:15", end: "20:00", venue: "west-stage" },
+    { artist: "Curtain Blue Presents 'Kesar'", start: "20:15", end: "21:15", venue: "west-stage" },
+    { artist: "Auntie Flo (Full Live Band)", start: "21:30", end: "22:30", venue: "west-stage" },
+    { artist: "1-800 GIRLS (DJ)", start: "20:00", end: "23:00", venue: "corona-yurt" },
+    { artist: "Akanbi", start: "23:00", end: "02:00", venue: "corona-yurt" },
+    { artist: "Direct Drive x Jay Drive", start: "02:00", end: "05:00", venue: "corona-yurt" },
+    { artist: "Girls Night Out", start: "22:30", end: "00:30", venue: "budx-east" },
+    { artist: "Kia", start: "00:30", end: "02:00", venue: "budx-east" },
+    { artist: "DJ SWISHA", start: "02:00", end: "03:30", venue: "budx-east" },
+    { artist: "pause.dxa", start: "22:30", end: "23:30", venue: "stepwell" },
+    { artist: "Shantam (Live)", start: "23:30", end: "00:30", venue: "stepwell" },
+    { artist: "SSIEGE (Live)", start: "00:30", end: "01:30", venue: "stepwell" },
+    { artist: "Tyrell Dub Corp (Live)", start: "01:30", end: "02:30", venue: "stepwell" },
+    { artist: "moktar", start: "02:30", end: "05:30", venue: "stepwell" },
+    { artist: "Auntie Flo (DJ)", start: "15:00", end: "17:00", venue: "jameson-club" },
+    { artist: "1-800 GIRLS (Live)", start: "17:00", end: "18:00", venue: "jameson-club" },
+    { artist: "Puqaar Diaries 2: Screening & Conversation", start: "15:00", end: "16:00", venue: "sabha", tag: "Talk" },
+  ],
+  sun: [
+    { artist: "Girls Night Out", start: "12:00", end: "15:00", venue: "easy-picnic" },
+    { artist: "Mafalda", start: "15:00", end: "18:00", venue: "easy-picnic" },
+    { artist: "Yakh Basta", start: "02:00", end: "05:00", venue: "puqaar" },
+    { artist: "JBABE", start: "18:00", end: "18:45", venue: "west-stage" },
+    { artist: "Jal, Jungle, Zameen: Elsewhere In India (Debut)", start: "19:00", end: "20:00", venue: "west-stage" },
+    { artist: "Shantam (Live)", start: "20:15", end: "21:15", venue: "west-stage" },
+    { artist: "Rival Consoles (Live AV)", start: "21:30", end: "22:30", venue: "west-stage" },
+    { artist: "No Plastic", start: "20:00", end: "23:00", venue: "corona-yurt" },
+    { artist: "Tonkatsukitty", start: "23:00", end: "02:00", venue: "corona-yurt" },
+    { artist: "Zokhuma", start: "02:00", end: "05:00", venue: "corona-yurt" },
+    { artist: "D. Tiffany", start: "22:30", end: "02:00", venue: "budx-east" },
+    { artist: "Sunju Hargun (B-Side)", start: "22:30", end: "02:00", venue: "stepwell" },
+    { artist: "Daisy Moon", start: "02:00", end: "05:00", venue: "stepwell" },
+    { artist: "Majestic 88", start: "15:00", end: "17:00", venue: "jameson-club" },
+    { artist: "FILM (Live)", start: "17:00", end: "18:00", venue: "jameson-club" },
+    { artist: "In Tune: Live Inter-Traditional Jam", start: "12:00", end: "12:30", venue: "sabha", tag: "Talk" },
+    { artist: "In Tune: Folk & Futurism", start: "12:45", end: "13:30", venue: "sabha", tag: "Talk" },
+    { artist: "In Tune: Trends For 2026", start: "13:00", end: "13:45", venue: "sabha", tag: "Talk" },
+    { artist: "In Tune: Influences", start: "13:30", end: "14:15", venue: "sabha", tag: "Talk" },
+    { artist: "In Tune: The Sound Of Belonging", start: "14:15", end: "15:00", venue: "sabha", tag: "Talk" },
+  ],
+};
+
+const STORAGE_KEY = "mf-nomads-2026-selections";
+const DAY_DATES = { fri: "2026-02-13", sat: "2026-02-14", sun: "2026-02-15" };
+
+const TIMELINE_START = 11;
+const TIMELINE_END_NEXT = 6;
+const TOTAL_HOURS = (24 - TIMELINE_START) + TIMELINE_END_NEXT;
+const PX_PER_HOUR = 120;
+
+function eventId(day, i) { return `${day}-${i}`; }
+
+function loadSelections() {
+  try { return new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]")); }
+  catch { return new Set(); }
+}
+
+function saveSelections(sel) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify([...sel]));
+}
+
+let selections = loadSelections();
+let filterMode = "all";
+
+function timeToMinutes(t) {
+  const [h, m] = t.split(":").map(Number);
+  let mins = h * 60 + m;
+  if (h < TIMELINE_START) mins += 24 * 60;
+  return mins;
+}
+
+const TIMELINE_START_MINS = TIMELINE_START * 60;
+
+function minutesToPx(mins) {
+  return ((mins - TIMELINE_START_MINS) / 60) * PX_PER_HOUR;
+}
+
+function fmt12(t) {
+  const [h, m] = t.split(":").map(Number);
+  const suffix = h >= 12 && h < 24 ? "PM" : "AM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${m.toString().padStart(2, "0")} ${suffix}`;
+}
+
+function timeLabels() {
+  const labels = [];
+  for (let i = 0; i < TOTAL_HOURS; i++) {
+    const h = (TIMELINE_START + i) % 24;
+    const suffix = h >= 12 && h < 24 ? "PM" : "AM";
+    const h12 = h % 12 || 12;
+    labels.push(`${h12}:00 ${suffix}`);
+  }
+  return labels;
+}
+
+function updateCounts() {
+  const count = selections.size;
+  document.getElementById("selected-count").textContent = count > 0 ? count : "";
+  document.getElementById("export-ics").disabled = count === 0;
+  document.getElementById("clear-btn").disabled = count === 0;
+}
+
+function venuesForDay(day) {
+  const used = new Set(SCHEDULE[day].map(e => e.venue));
+  return VENUES.filter(v => used.has(v.id));
+}
+
+function renderTimeline(day) {
+  const events = SCHEDULE[day];
+  const venues = venuesForDay(day);
+  const labels = timeLabels();
+  const totalW = TOTAL_HOURS * PX_PER_HOUR;
+
+  const venueEvents = new Map();
+  events.forEach((ev, i) => {
+    const id = eventId(day, i);
+    if (filterMode === "selected" && !selections.has(id)) return;
+    if (!venueEvents.has(ev.venue)) venueEvents.set(ev.venue, []);
+    venueEvents.get(ev.venue).push({ ...ev, idx: i });
+  });
+
+  const filteredVenues = filterMode === "selected"
+    ? venues.filter(v => venueEvents.has(v.id))
+    : venues;
+
+  if (filterMode === "selected" && filteredVenues.length === 0) {
+    return `<div class="empty-state">No starred sets for this day</div>`;
+  }
+
+  const cols = `var(--venue-w) repeat(${TOTAL_HOURS}, var(--hour-w))`;
+  const rows = `auto repeat(${filteredVenues.length}, var(--row-h))`;
+
+  let html = `<div class="timeline" style="grid-template-columns:${cols}; grid-template-rows:${rows};">`;
+
+  html += `<div class="timeline-corner"></div>`;
+  for (const label of labels) {
+    html += `<div class="time-label">${label}</div>`;
+  }
+
+  filteredVenues.forEach((v) => {
+    html += `<div class="venue-label">${v.name}</div>`;
+
+    for (let c = 0; c < TOTAL_HOURS; c++) {
+      html += `<div class="venue-track-cell"`;
+      if (c === 0) {
+        html += ` style="position:relative;"`;
+      }
+      html += `>`;
+
+      if (c === 0) {
+        const evts = venueEvents.get(v.id) || [];
+        for (const ev of evts) {
+          const startMins = timeToMinutes(ev.start);
+          const endMins = timeToMinutes(ev.end);
+          const left = minutesToPx(startMins);
+          const width = Math.max(((endMins - startMins) / 60) * PX_PER_HOUR, 30);
+          const id = eventId(day, ev.idx);
+          const sel = selections.has(id) ? " selected" : "";
+          const tagHtml = ev.tag ? `<span class="ev-tag">${ev.tag}</span>` : "";
+
+          html += `<div class="event-block${sel}" data-id="${id}" style="left:${left}px; width:${width}px;" title="${ev.artist} — ${fmt12(ev.start)} – ${fmt12(ev.end)}">`;
+          html += `<span class="ev-name">${ev.artist}</span>`;
+          html += `<span class="ev-time">${fmt12(ev.start)} – ${fmt12(ev.end)}</span>`;
+          html += tagHtml;
+          html += `</div>`;
+        }
+      }
+
+      html += `</div>`;
+    }
+  });
+
+  html += `</div>`;
+  return html;
+}
+
+function render() {
+  const container = document.getElementById("schedule-container");
+  container.innerHTML = "";
+  for (const day of ["fri", "sat", "sun"]) {
+    const isActive = document.querySelector(`.day-tab[data-day="${day}"]`).classList.contains("active");
+    const wrapper = document.createElement("div");
+    wrapper.className = `timeline-wrapper${isActive ? " active" : ""}`;
+    wrapper.dataset.day = day;
+    wrapper.innerHTML = renderTimeline(day);
+    container.appendChild(wrapper);
+  }
+  updateCounts();
+}
+
+document.getElementById("schedule-container").addEventListener("click", (e) => {
+  const block = e.target.closest(".event-block");
+  if (!block) return;
+  const id = block.dataset.id;
+  if (selections.has(id)) selections.delete(id);
+  else selections.add(id);
+  saveSelections(selections);
+
+  if (filterMode === "selected") {
+    render();
+  } else {
+    block.classList.toggle("selected");
+    updateCounts();
+  }
+});
+
+document.querySelector(".day-tabs").addEventListener("click", (e) => {
+  const tab = e.target.closest(".day-tab");
+  if (!tab) return;
+  document.querySelectorAll(".day-tab").forEach(t => t.classList.remove("active"));
+  tab.classList.add("active");
+  document.querySelectorAll(".timeline-wrapper").forEach(w => {
+    w.classList.toggle("active", w.dataset.day === tab.dataset.day);
+  });
+});
+
+document.getElementById("filter-all").addEventListener("click", () => {
+  filterMode = "all";
+  document.getElementById("filter-all").classList.add("active");
+  document.getElementById("filter-selected").classList.remove("active");
+  render();
+});
+
+document.getElementById("filter-selected").addEventListener("click", () => {
+  filterMode = "selected";
+  document.getElementById("filter-selected").classList.add("active");
+  document.getElementById("filter-all").classList.remove("active");
+  render();
+});
+
+document.getElementById("clear-btn").addEventListener("click", () => {
+  if (!confirm("Clear all selections?")) return;
+  selections.clear();
+  saveSelections(selections);
+  render();
+});
+
+document.getElementById("export-ics").addEventListener("click", () => {
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//MF Nomads Picker//EN",
+    "CALSCALE:GREGORIAN",
+    "X-WR-CALNAME:My Magnetic Fields Nomads 2026",
+    "X-WR-TIMEZONE:Asia/Kolkata",
+  ];
+
+  let i = 0;
+  for (const day of ["fri", "sat", "sun"]) {
+    SCHEDULE[day].forEach((ev, idx) => {
+      if (!selections.has(eventId(day, idx))) return;
+      const baseDate = DAY_DATES[day];
+      const [sh, sm] = ev.start.split(":").map(Number);
+      const [eh, em] = ev.end.split(":").map(Number);
+
+      const startDate = new Date(`${baseDate}T00:00:00+05:30`);
+      if (sh < 11) startDate.setDate(startDate.getDate() + 1);
+      startDate.setHours(sh, sm, 0);
+
+      const endDate = new Date(`${baseDate}T00:00:00+05:30`);
+      if (eh < 11) endDate.setDate(endDate.getDate() + 1);
+      endDate.setHours(eh, em, 0);
+
+      const fmt = (d) => {
+        const y = d.getFullYear();
+        const mo = String(d.getMonth() + 1).padStart(2, "0");
+        const da = String(d.getDate()).padStart(2, "0");
+        const h = String(d.getHours()).padStart(2, "0");
+        const mi = String(d.getMinutes()).padStart(2, "0");
+        return `${y}${mo}${da}T${h}${mi}00`;
+      };
+
+      const venueName = VENUES.find(v => v.id === ev.venue)?.name || "";
+      const esc = (s) => s.replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;");
+
+      lines.push(
+        "BEGIN:VEVENT",
+        `UID:mfpick-${i++}@nomads`,
+        `DTSTART;TZID=Asia/Kolkata:${fmt(startDate)}`,
+        `DTEND;TZID=Asia/Kolkata:${fmt(endDate)}`,
+        `SUMMARY:${esc(ev.artist)}`,
+        `LOCATION:${esc(venueName)} - Magnetic Fields Nomads`,
+        "END:VEVENT"
+      );
+    });
+  }
+
+  lines.push("END:VCALENDAR");
+  const blob = new Blob([lines.join("\r\n") + "\r\n"], { type: "text/calendar" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "my_mag_fields_2026.ics";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+render();
+</script>
+</body>
+</html>

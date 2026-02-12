@@ -1232,8 +1232,15 @@
       const TIMELINE_START = 11;
       const TIMELINE_END_NEXT = 6;
       const TOTAL_HOURS = 24 - TIMELINE_START + TIMELINE_END_NEXT;
-      const PX_PER_HOUR = 120;
       const TIMELINE_START_MINS = TIMELINE_START * 60;
+
+      function getHourWidth() {
+        return parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue(
+            "--hour-w",
+          ),
+        );
+      }
 
       function eventId(day, i) {
         return `${day}-${i}`;
@@ -1258,8 +1265,8 @@
         if (h < TIMELINE_START) mins += 24 * 60;
         return mins;
       }
-      function minutesToPx(mins) {
-        return ((mins - TIMELINE_START_MINS) / 60) * PX_PER_HOUR;
+      function minutesToPx(mins, pxPerHour) {
+        return ((mins - TIMELINE_START_MINS) / 60) * pxPerHour;
       }
 
       function fmt12(t) {
@@ -1294,6 +1301,7 @@
         const events = SCHEDULE[day];
         const venues = venuesForDay(day);
         const labels = timeLabels();
+        const pxPerHour = getHourWidth();
 
         const venueEvents = new Map();
         events.forEach((ev, i) => {
@@ -1327,9 +1335,9 @@
               for (const ev of evts) {
                 const startMins = timeToMinutes(ev.start);
                 const endMins = timeToMinutes(ev.end);
-                const left = minutesToPx(startMins);
+                const left = minutesToPx(startMins, pxPerHour);
                 const width = Math.max(
-                  ((endMins - startMins) / 60) * PX_PER_HOUR,
+                  ((endMins - startMins) / 60) * pxPerHour,
                   30,
                 );
                 const id = eventId(day, ev.idx);
@@ -1636,6 +1644,12 @@
       });
 
       render();
+
+      let resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(render, 150);
+      });
 
       if ("ontouchstart" in window) {
         document.getElementById("footer-hint").textContent =

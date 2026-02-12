@@ -514,6 +514,53 @@
       .touch-hint.show {
         opacity: 1;
       }
+
+      .install-banner {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-dark);
+        border-top: 1px solid var(--border);
+        padding: 0.75rem 1rem;
+        z-index: 200;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .install-banner.show {
+        display: flex;
+      }
+      .install-banner-text {
+        flex: 1;
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: var(--text);
+        line-height: 1.4;
+      }
+      .install-banner-btn {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.55rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--selected);
+        border-radius: 2px;
+        background: var(--selected);
+        color: var(--bg-dark);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .install-banner-dismiss {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.9rem;
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        padding: 0 0.25rem;
+      }
     </style>
   </head>
   <body>
@@ -550,6 +597,16 @@
       saved locally
     </footer>
     <div class="touch-hint" id="touch-hint">Long-press for artist info</div>
+
+    <div class="install-banner" id="install-banner">
+      <div class="install-banner-text" id="install-banner-text"></div>
+      <button class="install-banner-btn" id="install-banner-btn">
+        Install
+      </button>
+      <button class="install-banner-dismiss" id="install-banner-dismiss">
+        &times;
+      </button>
+    </div>
 
     <div class="panel-overlay" id="panel-overlay"></div>
     <div class="artist-panel" id="artist-panel">
@@ -1670,6 +1727,60 @@
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("sw.js");
       }
+
+      // Install prompt
+      (() => {
+        if (localStorage.getItem("mf-install-dismissed")) return;
+        if (window.matchMedia("(display-mode: standalone)").matches) return;
+        if (navigator.standalone) return;
+
+        const banner = document.getElementById("install-banner");
+        const text = document.getElementById("install-banner-text");
+        const btn = document.getElementById("install-banner-btn");
+        const dismiss = document.getElementById("install-banner-dismiss");
+
+        let deferredPrompt = null;
+
+        dismiss.addEventListener("click", () => {
+          banner.classList.remove("show");
+          localStorage.setItem("mf-install-dismissed", "1");
+        });
+
+        // Android / Chrome
+        window.addEventListener("beforeinstallprompt", (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          text.textContent = "Add to your home screen for quick access";
+          btn.textContent = "Install";
+          banner.classList.add("show");
+        });
+
+        btn.addEventListener("click", () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(() => {
+              banner.classList.remove("show");
+              deferredPrompt = null;
+            });
+          } else {
+            banner.classList.remove("show");
+            localStorage.setItem("mf-install-dismissed", "1");
+          }
+        });
+
+        // iOS Safari
+        const isIos =
+          /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isSafari =
+          /Safari/.test(navigator.userAgent) &&
+          !/CriOS|FxiOS|OPiOS|EdgiOS/.test(navigator.userAgent);
+        if (isIos && isSafari) {
+          text.innerHTML =
+            "Tap <strong>Share</strong> then <strong>Add to Home Screen</strong>";
+          btn.style.display = "none";
+          banner.classList.add("show");
+        }
+      })();
     </script>
     <script
       data-goatcounter="https://magfields.goatcounter.com/count"

@@ -1791,15 +1791,16 @@
           }
         });
 
-        // iOS Safari
+        // iOS Safari only
         const isIos =
           /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isSafari =
           /Safari/.test(navigator.userAgent) &&
           !/CriOS|FxiOS|OPiOS|EdgiOS/.test(navigator.userAgent);
+
         if (isIos && isSafari) {
           text.innerHTML =
-            "Tap <strong>Share</strong> then <strong>Add to Home Screen</strong>";
+            "Tap the <strong>Share button ⬆︎</strong> on your browser at the bottom → scroll to <strong>Add to Home Screen</strong> → tap <strong>Add</strong>";
           btn.style.display = "none";
           banner.classList.add("show");
         }

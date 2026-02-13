@@ -1741,9 +1741,11 @@
         if (imageUrls.length > 0 && "caches" in window) {
           caches.open("mf-nomads-v1").then((cache) => {
             imageUrls.forEach((url) => {
-              fetch(url)
+              fetch(url, { mode: "no-cors" })
                 .then((response) => {
-                  if (response.ok) cache.put(url, response);
+                  if (response.ok || response.type === "opaque") {
+                    cache.put(url, response);
+                  }
                 })
                 .catch(() => {});
             });

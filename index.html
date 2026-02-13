@@ -288,10 +288,13 @@
         letter-spacing: 0.05em;
       }
 
+      .timeline {
+        position: relative;
+      }
+
       .now-line {
         position: absolute;
         top: 0;
-        bottom: 0;
         width: 2px;
         background: var(--now-line);
         z-index: 10;
@@ -1411,6 +1414,14 @@
         let totalMinutes = hours * 60 + minutes;
         if (hours < TIMELINE_START) totalMinutes += 24 * 60;
 
+        console.log("Current time:", {
+          kolkataTime: kolkataTime.toISOString(),
+          day,
+          hours,
+          minutes,
+          totalMinutes,
+        });
+
         return { day, totalMinutes };
       }
 
@@ -1438,14 +1449,15 @@
 
         const cols = `var(--venue-w) repeat(${TOTAL_HOURS}, var(--hour-w))`;
         const rows = `auto repeat(${filteredVenues.length}, var(--row-h))`;
+
+        // Calculate "now" line position if applicable
+        const currentTime = getCurrentTimeInfo();
+        const showNowLine = currentTime && currentTime.day === day;
+
         let html = `<div class="timeline" style="grid-template-columns:${cols}; grid-template-rows:${rows};">`;
         html += `<div class="timeline-corner"></div>`;
         for (const label of labels)
           html += `<div class="time-label">${label}</div>`;
-
-        // Add "now" line if current time is on this day
-        const currentTime = getCurrentTimeInfo();
-        const showNowLine = currentTime && currentTime.day === day;
 
         filteredVenues.forEach((v, vIdx) => {
           html += `<div class="venue-label">${v.name}</div>`;
@@ -1472,20 +1484,29 @@
                 html += tagHtml;
                 html += `</div>`;
               }
-              // Add "now" line (only in first venue's first cell, spans all rows)
-              if (showNowLine && vIdx === 0) {
-                const nowLeft = minutesToPx(currentTime.totalMinutes, pxPerHour);
-                const height = filteredVenues.length * parseFloat(
-                  getComputedStyle(document.documentElement).getPropertyValue(
-                    "--row-h",
-                  ),
-                );
-                html += `<div class="now-line" style="left:${nowLeft}px; height:${height}px;"></div>`;
-              }
             }
             html += `</div>`;
           }
         });
+
+        // Add "now" line outside the grid, positioned absolutely
+        if (showNowLine) {
+          const nowLeft =
+            parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--venue-w",
+              ),
+            ) + minutesToPx(currentTime.totalMinutes, pxPerHour);
+          const timeRowHeight = 40; // Approximate height of time label row
+          const venueRowsHeight =
+            filteredVenues.length *
+            parseFloat(
+              getComputedStyle(document.documentElement).getPropertyValue(
+                "--row-h",
+              ),
+            );
+          html += `<div class="now-line" style="left:${nowLeft}px; top:${timeRowHeight}px; height:${venueRowsHeight}px;"></div>`;
+        }
 
         html += `</div>`;
         return html;

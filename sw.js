@@ -1,5 +1,10 @@
 const CACHE_NAME = "mf-nomads-v1";
-const PRECACHE = ["/", "/index.html", "/manifest.json"];
+const PRECACHE = [
+  "/",
+  "/index.html",
+  "/manifest.json",
+  "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap",
+];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)));

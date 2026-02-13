@@ -1731,6 +1731,26 @@
         navigator.serviceWorker.register("sw.js");
       }
 
+      // Preload all artist images for offline use
+      (() => {
+        const imageUrls = Object.values(ARTISTS)
+          .map((a) => a.image)
+          .filter((url) => url)
+          .map((url) => sanityThumb(url, 840));
+
+        if (imageUrls.length > 0 && "caches" in window) {
+          caches.open("mf-nomads-v1").then((cache) => {
+            imageUrls.forEach((url) => {
+              fetch(url)
+                .then((response) => {
+                  if (response.ok) cache.put(url, response);
+                })
+                .catch(() => {});
+            });
+          });
+        }
+      })();
+
       // Install prompt
       (() => {
         if (localStorage.getItem("mf-install-dismissed")) return;

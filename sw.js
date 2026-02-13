@@ -1,10 +1,5 @@
-const CACHE_NAME = "mf-nomads-v1";
-const PRECACHE = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap",
-];
+const CACHE_NAME = "mf-nomads-v2";
+const PRECACHE = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)));
@@ -30,8 +25,13 @@ self.addEventListener("fetch", (e) => {
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
 
+      const isExternal =
+        e.request.url.includes("cdn.sanity.io") ||
+        e.request.url.includes("fonts.googleapis.com") ||
+        e.request.url.includes("fonts.gstatic.com");
+
       return fetch(e.request, {
-        mode: e.request.url.includes("cdn.sanity.io") ? "no-cors" : "cors",
+        mode: isExternal ? "no-cors" : "cors",
       })
         .then((res) => {
           if (res.ok || res.type === "opaque") {

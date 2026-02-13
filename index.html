@@ -43,6 +43,7 @@
         --border-light: rgba(240, 236, 228, 0.07);
         --card-bg: rgba(240, 236, 228, 0.06);
         --card-hover: rgba(240, 236, 228, 0.1);
+        --now-line: #e87547;
         --venue-w: 160px;
         --hour-w: 120px;
         --row-h: 64px;
@@ -285,6 +286,27 @@
         color: var(--text-dim);
         text-transform: uppercase;
         letter-spacing: 0.05em;
+      }
+
+      .now-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--now-line);
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .now-line::before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: -3px;
+        width: 8px;
+        height: 8px;
+        background: var(--now-line);
+        border-radius: 50%;
       }
 
       .empty-state {
@@ -1357,6 +1379,41 @@
         return VENUES.filter((v) => used.has(v.id));
       }
 
+      function getCurrentTimeInfo() {
+        // Get current time in Asia/Kolkata timezone
+        const now = new Date();
+        const kolkataTime = new Date(
+          now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+        );
+
+        // Determine which day of the festival
+        const year = kolkataTime.getFullYear();
+        const month = kolkataTime.getMonth();
+        const date = kolkataTime.getDate();
+        const hours = kolkataTime.getHours();
+        const minutes = kolkataTime.getMinutes();
+
+        // Adjust date if it's early morning (before 11 AM, belongs to previous day's timeline)
+        let festivalDate = new Date(year, month, date);
+        if (hours < TIMELINE_START) {
+          festivalDate.setDate(festivalDate.getDate() - 1);
+        }
+
+        const dateStr = festivalDate.toISOString().split("T")[0];
+        let day = null;
+        if (dateStr === DAY_DATES.fri) day = "fri";
+        else if (dateStr === DAY_DATES.sat) day = "sat";
+        else if (dateStr === DAY_DATES.sun) day = "sun";
+
+        if (!day) return null; // Not during festival
+
+        // Calculate minutes since timeline start
+        let totalMinutes = hours * 60 + minutes;
+        if (hours < TIMELINE_START) totalMinutes += 24 * 60;
+
+        return { day, totalMinutes };
+      }
+
       function renderTimeline(day) {
         const events = SCHEDULE[day];
         const venues = venuesForDay(day);
@@ -1386,7 +1443,11 @@
         for (const label of labels)
           html += `<div class="time-label">${label}</div>`;
 
-        filteredVenues.forEach((v) => {
+        // Add "now" line if current time is on this day
+        const currentTime = getCurrentTimeInfo();
+        const showNowLine = currentTime && currentTime.day === day;
+
+        filteredVenues.forEach((v, vIdx) => {
           html += `<div class="venue-label">${v.name}</div>`;
           for (let c = 0; c < TOTAL_HOURS; c++) {
             html += `<div class="venue-track-cell"${c === 0 ? ' style="position:relative;"' : ""}>`;
@@ -1410,6 +1471,16 @@
                 html += `<span class="ev-time">${fmt12(ev.start)} \u2013 ${fmt12(ev.end)}</span>`;
                 html += tagHtml;
                 html += `</div>`;
+              }
+              // Add "now" line (only in first venue's first cell, spans all rows)
+              if (showNowLine && vIdx === 0) {
+                const nowLeft = minutesToPx(currentTime.totalMinutes, pxPerHour);
+                const height = filteredVenues.length * parseFloat(
+                  getComputedStyle(document.documentElement).getPropertyValue(
+                    "--row-h",
+                  ),
+                );
+                html += `<div class="now-line" style="left:${nowLeft}px; height:${height}px;"></div>`;
               }
             }
             html += `</div>`;
@@ -1705,6 +1776,14 @@
 
       render();
 
+      // Update "now" line every minute
+      setInterval(() => {
+        const currentTime = getCurrentTimeInfo();
+        if (currentTime) {
+          render();
+        }
+      }, 60000);
+
       let resizeTimer;
       window.addEventListener("resize", () => {
         clearTimeout(resizeTimer);
@@ -1739,7 +1818,7 @@
           .map((url) => sanityThumb(url, 840));
 
         if (imageUrls.length > 0 && "caches" in window) {
-          caches.open("mf-nomads-14f9161").then((cache) => {
+          caches.open("mf-nomads-74a1101").then((cache) => {
             imageUrls.forEach((url) => {
               fetch(url, { mode: "no-cors" })
                 .then((response) => {

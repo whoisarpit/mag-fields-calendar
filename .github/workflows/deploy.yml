@@ -1,0 +1,40 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate cache version from commit hash
+        run: |
+          CACHE_VERSION="mf-nomads-$(git rev-parse --short HEAD)"
+          echo "Cache version: $CACHE_VERSION"
+
+          # Update sw.js
+          sed -i "s/const CACHE_NAME = \"mf-nomads-[^\"]*\";/const CACHE_NAME = \"$CACHE_VERSION\";/" sw.js
+
+          # Update index.html
+          sed -i "s/caches\.open(\"mf-nomads-[^\"]*\")/caches.open(\"$CACHE_VERSION\")/g" index.html
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet sw.js index.html; then
+            echo "No changes to commit"
+          else
+            git add sw.js index.html
+            git commit -m "Auto-update cache version [skip ci]"
+            git push
+          fi

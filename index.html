@@ -2168,7 +2168,7 @@
           .map((url) => sanityThumb(url, 840));
 
         if (imageUrls.length > 0 && "caches" in window) {
-          caches.open("mf-nomads-42dd9df").then((cache) => {
+          caches.open("mf-nomads-a3c4083").then((cache) => {
             imageUrls.forEach((url) => {
               fetch(url, { mode: "no-cors" })
                 .then((response) => {

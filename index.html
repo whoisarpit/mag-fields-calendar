@@ -1806,9 +1806,7 @@
         URL.revokeObjectURL(a.href);
       });
 
-      render();
-
-      // Restore selected day from localStorage
+      // Restore selected day from localStorage BEFORE render
       (() => {
         const savedDay = loadSelectedDay();
         const savedTab = document.querySelector(
@@ -1819,11 +1817,10 @@
             .querySelectorAll(".day-tab")
             .forEach((t) => t.classList.remove("active"));
           savedTab.classList.add("active");
-          document.querySelectorAll(".timeline-wrapper").forEach((w) => {
-            w.classList.toggle("active", w.dataset.day === savedDay);
-          });
         }
       })();
+
+      render();
 
       // Update "now" line every minute
       setInterval(() => {

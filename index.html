@@ -589,6 +589,46 @@
         cursor: pointer;
         padding: 0 0.25rem;
       }
+
+      .update-banner {
+        display: none;
+        position: fixed;
+        top: 1rem;
+        left: 0.75rem;
+        right: 0.75rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--selected);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        z-index: 300;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+      }
+      .update-banner.show {
+        display: flex;
+      }
+      .update-banner-text {
+        flex: 1;
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: var(--text);
+        line-height: 1.4;
+      }
+      .update-banner-btn {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.55rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--selected);
+        border-radius: 2px;
+        background: var(--selected);
+        color: var(--bg-dark);
+        cursor: pointer;
+        white-space: nowrap;
+      }
     </style>
   </head>
   <body>
@@ -633,6 +673,15 @@
       </button>
       <button class="install-banner-dismiss" id="install-banner-dismiss">
         &times;
+      </button>
+    </div>
+
+    <div class="update-banner" id="update-banner">
+      <div class="update-banner-text">
+        New version available! Refresh to get the latest updates.
+      </div>
+      <button class="update-banner-btn" id="update-banner-btn">
+        Refresh
       </button>
     </div>
 
@@ -1852,8 +1901,50 @@
         }
       }
 
+      // Service worker registration and update detection
       if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("sw.js");
+        let refreshing = false;
+
+        navigator.serviceWorker.register("sw.js").then((registration) => {
+          // Check for updates every 60 seconds
+          setInterval(() => {
+            registration.update();
+          }, 60000);
+
+          // Detect when a new service worker is waiting
+          registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener("statechange", () => {
+              if (
+                newWorker.state === "installed" &&
+                navigator.serviceWorker.controller
+              ) {
+                // New service worker available, show update banner
+                document.getElementById("update-banner").classList.add("show");
+              }
+            });
+          });
+        });
+
+        // Reload when service worker takes control
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
+
+        // Handle update button click
+        document
+          .getElementById("update-banner-btn")
+          .addEventListener("click", () => {
+            // Tell waiting service worker to activate immediately
+            if (navigator.serviceWorker.controller) {
+              navigator.serviceWorker.controller.postMessage({
+                type: "SKIP_WAITING",
+              });
+            }
+          });
       }
 
       // Preload all artist images for offline use

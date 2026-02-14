@@ -2086,6 +2086,7 @@
       // Service worker registration and update detection
       if ("serviceWorker" in navigator) {
         let refreshing = false;
+        let waitingWorker = null;
 
         navigator.serviceWorker.register("sw.js").then((registration) => {
           // Check for updates every 60 seconds
@@ -2101,11 +2102,19 @@
                 newWorker.state === "installed" &&
                 navigator.serviceWorker.controller
               ) {
+                // Store reference to waiting worker
+                waitingWorker = newWorker;
                 // New service worker available, show update banner
                 document.getElementById("update-banner").classList.add("show");
               }
             });
           });
+
+          // Check if there's already a waiting worker
+          if (registration.waiting) {
+            waitingWorker = registration.waiting;
+            document.getElementById("update-banner").classList.add("show");
+          }
         });
 
         // Reload when service worker takes control
@@ -2121,8 +2130,8 @@
           .getElementById("update-banner-btn")
           .addEventListener("click", () => {
             // Tell waiting service worker to activate immediately
-            if (navigator.serviceWorker.controller) {
-              navigator.serviceWorker.controller.postMessage({
+            if (waitingWorker) {
+              waitingWorker.postMessage({
                 type: "SKIP_WAITING",
               });
             }

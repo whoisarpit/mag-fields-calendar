@@ -1,13 +1,20 @@
 /**
  * Complete schedule extracted from https://nomads.magneticfields.in/schedule
- * Generated: 2026-02-14
+ * Generated: 2026-02-14 (Updated with fresh scrape)
  *
  * This is a reference file showing the complete schedule from the official site.
  * Use this to verify your index.html schedule is accurate.
  *
- * Total events: 78
+ * Key corrections from fresh scrape:
+ * - Corona Sundowner has NO events (events moved to Sabha Bhavan)
+ * - Jameson Club has NO events (event moved to Puqaar)
+ * - Auntie Flow (DJ) appears 2x on Saturday: puqaar 3-5pm, sabha 7-8pm
+ * - 1-800 GIRLS (Live) is at sabha 9-10pm on Saturday
+ * - Majestic 88 and FILM are at sabha on Sunday
+ *
+ * Total events: 79
  * - Friday: 17 events
- * - Saturday: 33 events
+ * - Saturday: 34 events
  * - Sunday: 28 events
  */
 
@@ -191,16 +198,22 @@ const SCHEDULE_REFERENCE = {
       venue: "stepwell",
     },
     {
-      artist: "Auntie Flo (DJ)",
+      artist: "Auntie Flow (DJ)",
       start: "15:00",
       end: "17:00",
-      venue: "jameson-club",
+      venue: "puqaar",
+    },
+    {
+      artist: "Auntie Flow (DJ)",
+      start: "19:00",
+      end: "20:00",
+      venue: "sabha",
     },
     {
       artist: "1-800 GIRLS (Live)",
-      start: "17:00",
-      end: "18:00",
-      venue: "corona-sundowner",
+      start: "21:00",
+      end: "22:00",
+      venue: "sabha",
     },
     {
       artist: "Flow: Mindful Movement",
@@ -337,13 +350,13 @@ const SCHEDULE_REFERENCE = {
       artist: "Majestic 88",
       start: "15:00",
       end: "17:00",
-      venue: "corona-sundowner",
+      venue: "sabha",
     },
     {
       artist: "FILM (Live)",
       start: "17:00",
       end: "18:00",
-      venue: "corona-sundowner",
+      venue: "sabha",
     },
     {
       artist: "Somatic Release Practice",

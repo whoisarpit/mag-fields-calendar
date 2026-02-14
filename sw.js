@@ -1,4 +1,4 @@
-const CACHE_NAME = "mf-nomads-a673a6e";
+const CACHE_NAME = "mf-nomads-42dd9df";
 const PRECACHE = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (e) => {

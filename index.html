@@ -1636,12 +1636,21 @@
         const minutes = kolkataTime.getMinutes();
 
         // Adjust date if it's early morning (before 11 AM, belongs to previous day's timeline)
-        let festivalDate = new Date(year, month, date);
+        let festivalYear = year;
+        let festivalMonth = month + 1; // Convert to 1-indexed
+        let festivalDay = date;
+
         if (hours < TIMELINE_START) {
-          festivalDate.setDate(festivalDate.getDate() - 1);
+          // Subtract a day for early morning hours
+          const tempDate = new Date(year, month, date);
+          tempDate.setDate(tempDate.getDate() - 1);
+          festivalYear = tempDate.getFullYear();
+          festivalMonth = tempDate.getMonth() + 1;
+          festivalDay = tempDate.getDate();
         }
 
-        const dateStr = festivalDate.toISOString().split("T")[0];
+        // Construct date string directly to avoid timezone issues
+        const dateStr = `${festivalYear}-${String(festivalMonth).padStart(2, "0")}-${String(festivalDay).padStart(2, "0")}`;
         let day = null;
         if (dateStr === DAY_DATES.fri) day = "fri";
         else if (dateStr === DAY_DATES.sat) day = "sat";

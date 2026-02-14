@@ -6,9 +6,8 @@
  * Use this to verify your index.html schedule is accurate.
  *
  * Key corrections from fresh scrape:
- * - Corona Sundowner has NO events (events moved to Sabha Bhavan)
- * - Jameson Club has NO events (event moved to Puqaar)
- * - Auntie Flow (DJ) appears 2x on Saturday: puqaar 3-5pm, sabha 7-8pm
+ * - Corona Sundowner has Auntie Flow (DJ) 3-5pm on Saturday
+ * - Auntie Flow (DJ) appears 2x on Saturday: corona-sundowner 3-5pm, sabha 7-8pm
  * - 1-800 GIRLS (Live) is at sabha 9-10pm on Saturday
  * - Majestic 88 and FILM are at sabha on Sunday
  *
@@ -201,7 +200,7 @@ const SCHEDULE_REFERENCE = {
       artist: "Auntie Flow (DJ)",
       start: "15:00",
       end: "17:00",
-      venue: "puqaar",
+      venue: "corona-sundowner",
     },
     {
       artist: "Auntie Flow (DJ)",

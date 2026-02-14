@@ -1309,6 +1309,7 @@
       };
 
       const STORAGE_KEY = "mf-nomads-2026-selections";
+      const SELECTED_DAY_KEY = "mf-nomads-2026-selected-day";
       const DAY_DATES = {
         fri: "2026-02-13",
         sat: "2026-02-14",
@@ -1339,6 +1340,14 @@
       }
       function saveSelections(sel) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify([...sel]));
+      }
+
+      function saveSelectedDay(day) {
+        localStorage.setItem(SELECTED_DAY_KEY, day);
+      }
+
+      function loadSelectedDay() {
+        return localStorage.getItem(SELECTED_DAY_KEY) || "fri";
       }
 
       let selections = loadSelections();
@@ -1711,13 +1720,15 @@
       document.querySelector(".day-tabs").addEventListener("click", (e) => {
         const tab = e.target.closest(".day-tab");
         if (!tab) return;
+        const selectedDay = tab.dataset.day;
         document
           .querySelectorAll(".day-tab")
           .forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
         document.querySelectorAll(".timeline-wrapper").forEach((w) => {
-          w.classList.toggle("active", w.dataset.day === tab.dataset.day);
+          w.classList.toggle("active", w.dataset.day === selectedDay);
         });
+        saveSelectedDay(selectedDay);
       });
 
       document.getElementById("filter-all").addEventListener("click", () => {
@@ -1796,6 +1807,23 @@
       });
 
       render();
+
+      // Restore selected day from localStorage
+      (() => {
+        const savedDay = loadSelectedDay();
+        const savedTab = document.querySelector(
+          `.day-tab[data-day="${savedDay}"]`,
+        );
+        if (savedTab) {
+          document
+            .querySelectorAll(".day-tab")
+            .forEach((t) => t.classList.remove("active"));
+          savedTab.classList.add("active");
+          document.querySelectorAll(".timeline-wrapper").forEach((w) => {
+            w.classList.toggle("active", w.dataset.day === savedDay);
+          });
+        }
+      })();
 
       // Update "now" line every minute
       setInterval(() => {

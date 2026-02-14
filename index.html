@@ -1541,6 +1541,7 @@
 
       const STORAGE_KEY = "mf-nomads-2026-selections";
       const SELECTED_DAY_KEY = "mf-nomads-2026-selected-day";
+      const SCROLL_POSITION_KEY = "mf-nomads-2026-scroll-positions";
       const DAY_DATES = {
         fri: "2026-02-13",
         sat: "2026-02-14",
@@ -1579,6 +1580,29 @@
 
       function loadSelectedDay() {
         return localStorage.getItem(SELECTED_DAY_KEY) || "fri";
+      }
+
+      function saveScrollPosition(day, scrollLeft) {
+        try {
+          const positions = JSON.parse(
+            localStorage.getItem(SCROLL_POSITION_KEY) || "{}"
+          );
+          positions[day] = scrollLeft;
+          localStorage.setItem(SCROLL_POSITION_KEY, JSON.stringify(positions));
+        } catch (e) {
+          // Ignore localStorage errors
+        }
+      }
+
+      function loadScrollPosition(day) {
+        try {
+          const positions = JSON.parse(
+            localStorage.getItem(SCROLL_POSITION_KEY) || "{}"
+          );
+          return positions[day] || 0;
+        } catch (e) {
+          return 0;
+        }
       }
 
       let selections = loadSelections();
@@ -1774,6 +1798,18 @@
           wrapper.dataset.day = day;
           wrapper.innerHTML = renderTimeline(day);
           container.appendChild(wrapper);
+
+          // Attach scroll listener
+          wrapper.addEventListener("scroll", () => {
+            saveScrollPosition(day, wrapper.scrollLeft);
+          });
+
+          // Restore scroll position if this is the active day
+          if (isActive) {
+            requestAnimationFrame(() => {
+              wrapper.scrollLeft = loadScrollPosition(day);
+            });
+          }
         }
         updateCounts();
       }
@@ -1967,7 +2003,14 @@
           .forEach((t) => t.classList.remove("active"));
         tab.classList.add("active");
         document.querySelectorAll(".timeline-wrapper").forEach((w) => {
-          w.classList.toggle("active", w.dataset.day === selectedDay);
+          const isActive = w.dataset.day === selectedDay;
+          w.classList.toggle("active", isActive);
+          // Restore scroll position when switching to this day
+          if (isActive) {
+            requestAnimationFrame(() => {
+              w.scrollLeft = loadScrollPosition(selectedDay);
+            });
+          }
         });
         saveSelectedDay(selectedDay);
       });

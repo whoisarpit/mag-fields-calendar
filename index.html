@@ -44,6 +44,8 @@
         --card-bg: rgba(240, 236, 228, 0.06);
         --card-hover: rgba(240, 236, 228, 0.1);
         --now-line: #e87547;
+        --workshop-bg: rgba(138, 180, 180, 0.15);
+        --workshop-border: rgba(138, 180, 180, 0.4);
         --venue-w: 160px;
         --hour-w: 120px;
         --row-h: 64px;
@@ -252,6 +254,20 @@
         z-index: 2;
       }
       .event-block.selected {
+        background: var(--selected-bg);
+        border-color: var(--selected-border);
+      }
+
+      .event-block.workshop {
+        background: var(--workshop-bg);
+        border-color: var(--workshop-border);
+      }
+
+      .event-block.workshop:hover {
+        background: rgba(138, 180, 180, 0.22);
+      }
+
+      .event-block.workshop.selected {
         background: var(--selected-bg);
         border-color: var(--selected-border);
       }
@@ -707,6 +723,7 @@
         { id: "budx-east", name: "BUDx East Stage" },
         { id: "stepwell", name: "The Stepwell" },
         { id: "jameson-club", name: "The Jameson Connects Club" },
+        { id: "sanctuary", name: "The Sanctuary" },
         { id: "sabha", name: "Sabha Bhavan" },
       ];
 
@@ -1017,6 +1034,61 @@
           image: null,
           instagram: null,
         },
+        "Flow: Mindful Movement": {
+          bio: "A mindful movement session with Priyanjali Das, a psychologist, yoga and sound therapist whose work sits at the intersection of movement, sound and consciousness.",
+          image: null,
+          instagram: null,
+        },
+        "Breathwork: Awakening Prana Shakti": {
+          bio: "Breathwork session focused on awakening prana shakti (life force energy), facilitated by Shubhra.",
+          image: null,
+          instagram: null,
+        },
+        "Afloat: Experiential Live Soundscape": {
+          bio: "An experiential live soundscape session with Anushka & Varun, creating immersive sonic environments.",
+          image: null,
+          instagram: null,
+        },
+        "Nāda Yoga: Guided Voicework": {
+          bio: "Guided voicework session exploring nāda yoga (the yoga of sound) with Anushka.",
+          image: null,
+          instagram: null,
+        },
+        "Sharing Circle": {
+          bio: "A sharing circle facilitated by Kripi Malviya, psychotherapist, poet and Head of Welfare. A safe space for connection and reflection, with LGBTQIA+ focus on Saturday.",
+          image: null,
+          instagram: null,
+        },
+        "Sound Immersion: The Space Inside You": {
+          bio: "Sound immersion experience with Harsh & Sahitya (pause.dxa), exploring inner landscapes through therapeutic sound.",
+          image: null,
+          instagram: null,
+        },
+        "Expressive Art Therapy": {
+          bio: "Expressive art therapy combining sound, visual arts, and movement, facilitated by Shaswatee. Saturday focuses on Sound x Visual Arts, Sunday on Movement x Visual Arts.",
+          image: null,
+          instagram: null,
+        },
+        "Somatic Release Practice": {
+          bio: "Somatic release practice with Priyanjali Das, using body-centered techniques for releasing tension and connecting with the body.",
+          image: null,
+          instagram: null,
+        },
+        "Breathwork: Somatic Inquiry & Regulation": {
+          bio: "Breathwork session combining somatic inquiry and nervous system regulation, facilitated by Shubhra.",
+          image: null,
+          instagram: null,
+        },
+        "Nāda Nidra": {
+          bio: "Nāda Nidra (yogic sleep with sound) with Priyanjali, Harsh & Sahitya, combining deep relaxation with sound healing.",
+          image: null,
+          instagram: null,
+        },
+        "Song Catching": {
+          bio: "Song catching workshop with Varun, exploring spontaneous songmaking and vocal improvisation.",
+          image: null,
+          instagram: null,
+        },
       };
 
       function sanityThumb(url, w) {
@@ -1221,6 +1293,55 @@
             venue: "jameson-club",
           },
           {
+            artist: "Flow: Mindful Movement",
+            start: "09:00",
+            end: "09:45",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Breathwork: Awakening Prana Shakti",
+            start: "10:00",
+            end: "11:00",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Afloat: Experiential Live Soundscape",
+            start: "11:15",
+            end: "12:15",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Nāda Yoga: Guided Voicework",
+            start: "12:30",
+            end: "13:15",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Sharing Circle",
+            start: "13:30",
+            end: "15:00",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Sound Immersion: The Space Inside You",
+            start: "15:15",
+            end: "16:15",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Expressive Art Therapy",
+            start: "16:30",
+            end: "17:30",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
             artist: "Puqaar Diaries 2: Screening & Conversation",
             start: "15:00",
             end: "16:00",
@@ -1318,6 +1439,55 @@
             start: "17:00",
             end: "18:00",
             venue: "jameson-club",
+          },
+          {
+            artist: "Somatic Release Practice",
+            start: "09:00",
+            end: "09:45",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Breathwork: Somatic Inquiry & Regulation",
+            start: "10:00",
+            end: "11:00",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Nāda Nidra",
+            start: "11:15",
+            end: "12:15",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Song Catching",
+            start: "12:30",
+            end: "13:15",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Sharing Circle",
+            start: "13:30",
+            end: "15:00",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Afloat: Experiential Live Soundscape",
+            start: "15:15",
+            end: "16:15",
+            venue: "sanctuary",
+            tag: "Workshop",
+          },
+          {
+            artist: "Expressive Arts Therapy",
+            start: "16:30",
+            end: "17:30",
+            venue: "sanctuary",
+            tag: "Workshop",
           },
           {
             artist: "In Tune: Live Inter-Traditional Jam",
@@ -1533,10 +1703,11 @@
                 );
                 const id = eventId(day, ev.idx);
                 const sel = selections.has(id) ? " selected" : "";
+                const workshop = ev.tag === "Workshop" ? " workshop" : "";
                 const tagHtml = ev.tag
                   ? `<span class="ev-tag">${ev.tag}</span>`
                   : "";
-                html += `<div class="event-block${sel}" data-id="${id}" data-artist="${ev.artist.replace(/"/g, "&quot;")}" style="left:${left}px; width:${width}px;" title="${ev.artist} \u2014 ${fmt12(ev.start)} \u2013 ${fmt12(ev.end)}">`;
+                html += `<div class="event-block${sel}${workshop}" data-id="${id}" data-artist="${ev.artist.replace(/"/g, "&quot;")}" style="left:${left}px; width:${width}px;" title="${ev.artist} \u2014 ${fmt12(ev.start)} \u2013 ${fmt12(ev.end)}">`;
                 html += `<span class="ev-name">${ev.artist}</span>`;
                 html += `<span class="ev-time">${fmt12(ev.start)} \u2013 ${fmt12(ev.end)}</span>`;
                 html += tagHtml;

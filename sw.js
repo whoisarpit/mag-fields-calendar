@@ -1,9 +1,10 @@
-const CACHE_NAME = "mf-nomads-738ce7f";
+const CACHE_NAME = "mf-nomads-350c4ec";
 const PRECACHE = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)));
-  // Don't auto-activate - wait for user to click "Refresh"
+  // Auto-activate immediately
+  self.skipWaiting();
 });
 
 self.addEventListener("message", (e) => {

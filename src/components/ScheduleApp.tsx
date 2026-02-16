@@ -148,9 +148,9 @@ export default function ScheduleApp({
           return [
             venue.id,
             {
-              bg: hexToRgba(baseColor, 0.18),
-              border: hexToRgba(baseColor, 0.55),
-              hover: hexToRgba(baseColor, 0.26),
+              bg: hexToRgba(baseColor, 1),
+              border: hexToRgba(baseColor, 1),
+              hover: hexToRgba(baseColor, 1),
             },
           ];
         }),

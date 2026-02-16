@@ -1,0 +1,30 @@
+{
+  "pageTitle": "Magnetic Fields Nomads 2026 - Schedule Picker",
+  "festivalName": "Magnetic Fields Nomads",
+  "festivalDates": "Feb 13 \u2013 15, 2026 \u00b7 Khetri, Rajasthan",
+  "appShortName": "MF Nomads",
+  "themeColor": "#5a6345",
+  "cssVariables": {
+    "bg": "#5a6345",
+    "bg-dark": "#4a5238",
+    "text": "#f0ece4",
+    "text-dim": "#c0bdb5",
+    "selected": "#e8c547",
+    "selected-bg": "rgba(232, 197, 71, 0.18)",
+    "selected-border": "rgba(232, 197, 71, 0.6)",
+    "border": "rgba(240, 236, 228, 0.15)",
+    "border-light": "rgba(240, 236, 228, 0.07)",
+    "card-bg": "rgba(240, 236, 228, 0.06)",
+    "card-hover": "rgba(240, 236, 228, 0.1)",
+    "now-line": "#e87547",
+    "workshop-bg": "rgba(138, 180, 180, 0.15)",
+    "workshop-border": "rgba(138, 180, 180, 0.4)"
+  },
+  "footerDesktop": "Click to star \u00b7 Right-click for artist info \u00b7 Selections saved locally",
+  "footerTouch": "Tap to star \u00b7 Long-press for artist info \u00b7 Selections saved locally",
+  "touchHint": "Long-press for artist info",
+  "clearPrompt": "Clear all selections?",
+  "installBanner": {
+    "android": "Add to your home screen for quick access"
+  }
+}

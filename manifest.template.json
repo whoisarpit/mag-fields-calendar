@@ -1,11 +1,11 @@
 {
-  "name": "Magnetic Fields Nomads 2026",
-  "short_name": "MF Nomads",
-  "description": "Schedule picker for Magnetic Fields Nomads 2026",
+  "name": "__MANIFEST_NAME__",
+  "short_name": "__APP_SHORT_NAME__",
+  "description": "__MANIFEST_DESCRIPTION__",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#5a6345",
-  "theme_color": "#5a6345",
+  "background_color": "__THEME_COLOR__",
+  "theme_color": "__THEME_COLOR__",
   "icons": [
     {
       "src": "icon-192.png",

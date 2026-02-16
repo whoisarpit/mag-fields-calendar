@@ -1,0 +1,38 @@
+{
+  "storagePrefix": "mf-nomads-2026",
+  "timezone": "Asia/Kolkata",
+  "timeline": {
+    "startHour": 9,
+    "endNextDayHour": 6
+  },
+  "calendar": {
+    "prodId": "-//MF Nomads Picker//EN",
+    "name": "My Magnetic Fields Nomads 2026",
+    "locationSuffix": "Magnetic Fields Nomads",
+    "downloadFileName": "my_mag_fields_2026.ics"
+  },
+  "artistPage": {
+    "baseUrl": "https://nomads.magneticfields.in/artists/",
+    "label": "Nomads page"
+  },
+  "days": [
+    {
+      "id": "fri",
+      "tabLabel": "Fri \u2014 Feb 13",
+      "panelLabel": "Fri Feb 13",
+      "date": "2026-02-13"
+    },
+    {
+      "id": "sat",
+      "tabLabel": "Sat \u2014 Feb 14",
+      "panelLabel": "Sat Feb 14",
+      "date": "2026-02-14"
+    },
+    {
+      "id": "sun",
+      "tabLabel": "Sun \u2014 Feb 15",
+      "panelLabel": "Sun Feb 15",
+      "date": "2026-02-15"
+    }
+  ]
+}

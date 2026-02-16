@@ -5,16 +5,16 @@
   "appShortName": "MF Nomads",
   "themeColor": "#5a6345",
   "stagePalette": [
-    "#e8c547",
-    "#e87547",
-    "#6ea071",
-    "#6f8cb8",
-    "#b17eb3",
-    "#c98f50",
-    "#6bb3a5",
-    "#d86b8b",
-    "#8ea164",
-    "#7f93cc"
+    "#c9a34a",
+    "#b8734a",
+    "#789366",
+    "#6f8594",
+    "#96778a",
+    "#ae8858",
+    "#6d9888",
+    "#a56a5d",
+    "#8a9d60",
+    "#7c8fa0"
   ],
   "cssVariables": {
     "bg": "#5a6345",

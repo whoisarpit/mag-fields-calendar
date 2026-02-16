@@ -60,7 +60,7 @@ export function ArtistPanel({
           </div>
           <div class="panel-meta" id="panel-meta">
             {panelEvent
-              ? `${panelDayLabel} \u00b7 ${formatTime12Hour(panelEvent.start)} \u2013 ${formatTime12Hour(panelEvent.end)} \u00b7 ${panelVenue}`
+              ? `${panelDayLabel} · ${formatTime12Hour(panelEvent.start)} – ${formatTime12Hour(panelEvent.end)} · ${panelVenue}`
               : ""}
           </div>
           <div class="panel-bio" id="panel-bio">

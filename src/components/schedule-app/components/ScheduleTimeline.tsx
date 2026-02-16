@@ -139,7 +139,7 @@ export function ScheduleTimeline({
                                   left: `calc(${leftHours} * var(--hour-w))`,
                                   width: `max(calc(${durationHours} * var(--hour-w)), 30px)`,
                                 }}
-                                title={`${event.artist} \u2014 ${formatTime12Hour(event.start)} \u2013 ${formatTime12Hour(event.end)}`}
+                                title={`${event.artist} — ${formatTime12Hour(event.start)} – ${formatTime12Hour(event.end)}`}
                                 onClick={() => onOpenPanel(event.artist, id)}
                                 onContextMenu={(eventObj) => {
                                   eventObj.preventDefault();
@@ -165,7 +165,7 @@ export function ScheduleTimeline({
                               >
                                 <span class="ev-name">{event.artist}</span>
                                 <span class="ev-time">
-                                  {formatTime12Hour(event.start)} \u2013{" "}
+                                  {formatTime12Hour(event.start)} –{" "}
                                   {formatTime12Hour(event.end)}
                                 </span>
                                 {event.tag ? (

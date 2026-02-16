@@ -1,6 +1,17 @@
-import branding from "../../data/branding.json";
+import brandingJson from "../../data/branding.json";
 
 export const prerender = true;
+
+type BrandingManifest = {
+  appShortName?: string;
+  festivalName?: string;
+  manifestDescription?: string;
+  manifestName?: string;
+  pageTitle?: string;
+  themeColor?: string;
+};
+
+const branding = brandingJson as BrandingManifest;
 
 export const GET = () => {
   const manifest = {

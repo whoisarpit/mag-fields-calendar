@@ -1,11 +1,8 @@
 ---
-import ArtistPanel from "../components/ArtistPanel.astro";
 import FestivalHeader from "../components/FestivalHeader.astro";
-import ScheduleShell from "../components/ScheduleShell.astro";
-import ScheduleToolbar from "../components/ScheduleToolbar.astro";
+import ScheduleApp from "../components/ScheduleApp";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getSitePayload } from "../lib/site-payload.js";
-import appScript from "../scripts/app.js?url";
+import { getSitePayload } from "../lib/site-payload";
 import "../styles/base.css";
 import "../styles/timeline.css";
 
@@ -24,14 +21,11 @@ const {
 
 <BaseLayout appShortName={appShortName} pageTitle={pageTitle} themeColor={themeColor}>
   <FestivalHeader festivalDates={festivalDates} festivalName={festivalName} />
-  <ScheduleToolbar />
-  <ScheduleShell footerDesktop={footerDesktop} touchHint={touchHint} />
-  <ArtistPanel />
-
+  <ScheduleApp
+    appConfig={appConfig}
+    footerDesktop={footerDesktop}
+    touchHint={touchHint}
+    client:load
+  />
   <style is:inline set:html={cssOverride}></style>
-  <script
-    is:inline
-    set:html={`window.__APP_CONFIG__ = ${JSON.stringify(appConfig)};`}
-  ></script>
-  <script type="module" src={appScript}></script>
 </BaseLayout>

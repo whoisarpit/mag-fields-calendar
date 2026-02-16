@@ -1,2 +1,4 @@
 # Build outputs
 dist/
+node_modules/
+.astro/

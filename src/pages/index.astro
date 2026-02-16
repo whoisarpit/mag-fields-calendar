@@ -1,0 +1,736 @@
+---
+import venues from "../../data/venues.json";
+import artists from "../../data/artists.json";
+import schedule from "../../data/events.json";
+import branding from "../../data/branding.json";
+import festival from "../../data/festival.json";
+import appScript from "../scripts/app.js?url";
+
+const timeline = festival.timeline || {};
+const cssVars = branding.cssVariables || {};
+const festivalDays = festival.days || [];
+const pageTitle = branding.pageTitle || branding.festivalName || "Festival Schedule";
+const themeColor = branding.themeColor || "#111111";
+const appShortName = branding.appShortName || branding.festivalName || "Festival";
+const festivalName = branding.festivalName || pageTitle;
+const festivalDates = branding.festivalDates || "";
+const footerDesktop = branding.footerDesktop || "";
+const touchHint = branding.touchHint || "";
+
+const buildId =
+  import.meta.env.PUBLIC_BUILD_ID ||
+  process.env.GITHUB_SHA?.slice(0, 7) ||
+  Date.now().toString(36);
+
+const swCachePrefix =
+  String(festival.storagePrefix || "festival")
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "festival";
+
+const cacheName = `${swCachePrefix}-${buildId}`;
+
+const appConfig = {
+  venues,
+  artists,
+  schedule,
+  festivalDays,
+  festivalTimezone: festival.timezone || "UTC",
+  storagePrefix: festival.storagePrefix || "festival",
+  timelineStart: timeline.startHour ?? 9,
+  timelineEndNext: timeline.endNextDayHour ?? 6,
+  artistPageBaseUrl: festival.artistPage?.baseUrl || "",
+  artistPageLabel: festival.artistPage?.label || "Artist page",
+  cacheName,
+  clearPrompt: branding.clearPrompt || "Clear all selections?",
+  footerTouch: branding.footerTouch || branding.footerDesktop || "",
+  installBannerAndroid: branding.installBanner?.android || "",
+  buildId,
+  swCachePrefix,
+};
+
+const cssOverride = `:root {
+  --bg: ${cssVars.bg || "#111111"};
+  --bg-dark: ${cssVars["bg-dark"] || "#000000"};
+  --text: ${cssVars.text || "#f2f2f2"};
+  --text-dim: ${cssVars["text-dim"] || "#cccccc"};
+  --selected: ${cssVars.selected || "#f6c445"};
+  --selected-bg: ${cssVars["selected-bg"] || "rgba(246, 196, 69, 0.18)"};
+  --selected-border: ${cssVars["selected-border"] || "rgba(246, 196, 69, 0.6)"};
+  --border: ${cssVars.border || "rgba(255, 255, 255, 0.15)"};
+  --border-light: ${cssVars["border-light"] || "rgba(255, 255, 255, 0.07)"};
+  --card-bg: ${cssVars["card-bg"] || "rgba(255, 255, 255, 0.06)"};
+  --card-hover: ${cssVars["card-hover"] || "rgba(255, 255, 255, 0.1)"};
+  --now-line: ${cssVars["now-line"] || "#ff6a3d"};
+  --workshop-bg: ${cssVars["workshop-bg"] || "rgba(138, 180, 180, 0.15)"};
+  --workshop-border: ${cssVars["workshop-border"] || "rgba(138, 180, 180, 0.4)"};
+}`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>{pageTitle}</title>
+    <meta name="theme-color" content={themeColor} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content={appShortName} />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #111111;
+        --bg-dark: #000000;
+        --text: #f2f2f2;
+        --text-dim: #cccccc;
+        --selected: #f6c445;
+        --selected-bg: rgba(246, 196, 69, 0.18);
+        --selected-border: rgba(246, 196, 69, 0.6);
+        --border: rgba(255, 255, 255, 0.15);
+        --border-light: rgba(255, 255, 255, 0.07);
+        --card-bg: rgba(255, 255, 255, 0.06);
+        --card-hover: rgba(255, 255, 255, 0.1);
+        --now-line: #ff6a3d;
+        --workshop-bg: rgba(138, 180, 180, 0.15);
+        --workshop-border: rgba(138, 180, 180, 0.4);
+        --venue-w: 160px;
+        --hour-w: 120px;
+        --row-h: 64px;
+      }
+
+      body {
+        font-family: "IBM Plex Mono", monospace;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      header {
+        padding: 1.5rem 1.5rem 0.75rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border);
+      }
+
+      header h1 {
+        font-size: 0.75rem;
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 0.2rem;
+      }
+
+      header .dates {
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: var(--text-dim);
+        letter-spacing: 0.15em;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        padding: 0.6rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+
+      .toolbar-btn {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.6rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        padding: 0.3rem 0.65rem;
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-transform: uppercase;
+      }
+
+      .toolbar-btn:hover {
+        border-color: var(--text-dim);
+        color: var(--text);
+      }
+      .toolbar-btn.active {
+        border-color: var(--selected);
+        color: var(--selected);
+      }
+      .toolbar-btn.accent {
+        border-color: var(--selected);
+        color: var(--selected);
+      }
+      .toolbar-btn.accent:hover {
+        background: var(--selected);
+        color: var(--bg-dark);
+      }
+      .toolbar-btn:disabled {
+        opacity: 0.3;
+        cursor: default;
+        pointer-events: none;
+      }
+
+      .count-badge {
+        font-size: 0.55rem;
+        color: var(--selected);
+        margin-left: 0.2rem;
+      }
+
+      .day-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .day-tab {
+        flex: 1;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        padding: 0.6rem;
+        text-align: center;
+        background: transparent;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border-bottom: 2px solid transparent;
+        text-transform: uppercase;
+      }
+
+      .day-tab:hover {
+        color: var(--text);
+      }
+      .day-tab.active {
+        color: var(--text);
+        border-bottom-color: var(--text);
+      }
+
+      .timeline-wrapper {
+        display: none;
+        overflow-x: auto;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .timeline-wrapper.active {
+        display: block;
+      }
+
+      .timeline {
+        position: relative;
+        display: grid;
+        min-width: max-content;
+      }
+
+      .timeline-corner {
+        position: sticky;
+        left: 0;
+        z-index: 3;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        width: var(--venue-w);
+        min-width: var(--venue-w);
+      }
+
+      .time-label {
+        font-size: 0.55rem;
+        font-weight: 400;
+        color: var(--text-dim);
+        text-align: left;
+        padding: 0.5rem 0.25rem;
+        border-bottom: 1px solid var(--border);
+        border-right: 1px solid var(--border-light);
+        white-space: nowrap;
+        min-width: var(--hour-w);
+        width: var(--hour-w);
+      }
+
+      .venue-label {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: var(--bg);
+        font-size: 0.55rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        padding: 0 0.5rem;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid var(--border-light);
+        border-right: 1px solid var(--border);
+        width: var(--venue-w);
+        min-width: var(--venue-w);
+        height: var(--row-h);
+        line-height: 1.3;
+      }
+
+      .venue-track-cell {
+        border-right: 1px solid var(--border-light);
+        height: var(--row-h);
+      }
+
+      .event-block {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        border-radius: 3px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        user-select: none;
+        -webkit-user-select: none;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 0.4rem;
+        z-index: 1;
+      }
+
+      .event-block:hover {
+        background: var(--card-hover);
+        z-index: 2;
+      }
+      .event-block.selected {
+        background: var(--selected-bg);
+        border-color: var(--selected-border);
+      }
+
+      .event-block.workshop {
+        background: var(--workshop-bg);
+        border-color: var(--workshop-border);
+      }
+
+      .event-block.workshop:hover {
+        background: rgba(138, 180, 180, 0.22);
+      }
+
+      .event-block.workshop.selected {
+        background: var(--selected-bg);
+        border-color: var(--selected-border);
+      }
+
+      .event-block .ev-name {
+        font-size: 0.6rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.3;
+        transition: color 0.15s ease;
+      }
+
+      .event-block.selected .ev-name {
+        color: var(--selected);
+      }
+
+      .event-block .ev-time {
+        font-size: 0.5rem;
+        font-weight: 300;
+        color: var(--text-dim);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.3;
+      }
+
+      .event-block .ev-tag {
+        font-size: 0.45rem;
+        font-weight: 400;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .timeline {
+        position: relative;
+      }
+
+      .now-line {
+        position: absolute;
+        top: 0;
+        width: 2px;
+        background: var(--now-line);
+        z-index: 10;
+        pointer-events: none;
+      }
+
+      .now-line::before {
+        content: "";
+        position: absolute;
+        top: -4px;
+        left: -3px;
+        width: 8px;
+        height: 8px;
+        background: var(--now-line);
+        border-radius: 50%;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem 1.5rem;
+        color: var(--text-dim);
+        font-size: 0.7rem;
+        font-weight: 300;
+        grid-column: 1 / -1;
+      }
+
+      footer {
+        text-align: center;
+        padding: 1rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.5rem;
+        color: var(--text-dim);
+        font-weight: 300;
+        letter-spacing: 0.1em;
+      }
+
+      /* Artist detail panel */
+      .panel-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+      }
+
+      .panel-overlay.open {
+        display: block;
+      }
+
+      .artist-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: min(420px, 90vw);
+        background: var(--bg-dark);
+        z-index: 101;
+        overflow-y: auto;
+        transform: translateX(100%);
+        transition: transform 0.25s ease;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .artist-panel.open {
+        transform: translateX(0);
+      }
+
+      .panel-close {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 1rem;
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        z-index: 2;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .panel-close:hover {
+        color: var(--text);
+      }
+
+      .panel-img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        display: block;
+      }
+
+      .panel-body {
+        padding: 1.25rem;
+      }
+
+      .panel-artist-name {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+      }
+
+      .panel-artist-name.is-selected {
+        color: var(--selected);
+      }
+
+      .panel-meta {
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: var(--text-dim);
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+
+      .panel-bio {
+        font-size: 0.7rem;
+        font-weight: 300;
+        line-height: 1.7;
+        color: var(--text);
+        margin-bottom: 1.25rem;
+      }
+
+      .panel-links {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.25rem;
+      }
+
+      .panel-link {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.55rem;
+        font-weight: 400;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.3rem 0.6rem;
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        color: var(--text-dim);
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
+
+      .panel-link:hover {
+        border-color: var(--text);
+        color: var(--text);
+      }
+
+      .panel-star-btn {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.6rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--selected);
+        border-radius: 2px;
+        background: transparent;
+        color: var(--selected);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        width: 100%;
+      }
+
+      .panel-star-btn:hover {
+        background: var(--selected);
+        color: var(--bg-dark);
+      }
+      .panel-star-btn.is-selected {
+        background: var(--selected);
+        color: var(--bg-dark);
+      }
+
+      body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+      }
+
+      @media (max-width: 600px) {
+        :root {
+          --venue-w: 100px;
+          --hour-w: 90px;
+          --row-h: 56px;
+        }
+        header {
+          padding: 1rem 1rem 0.5rem;
+        }
+        header h1 {
+          font-size: 0.65rem;
+        }
+        .toolbar {
+          padding: 0.5rem 0.75rem;
+          gap: 0.5rem;
+        }
+        .toolbar-btn {
+          font-size: 0.55rem;
+          padding: 0.35rem 0.5rem;
+        }
+        .day-tab {
+          font-size: 0.6rem;
+          padding: 0.5rem 0.25rem;
+        }
+        .venue-label {
+          font-size: 0.45rem;
+          padding: 0 0.3rem;
+        }
+        .time-label {
+          font-size: 0.5rem;
+        }
+        .event-block .ev-name {
+          font-size: 0.55rem;
+        }
+        .event-block .ev-time {
+          font-size: 0.45rem;
+        }
+        footer {
+          font-size: 0.45rem;
+        }
+      }
+
+      .touch-hint {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        font-size: 0.55rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 3px;
+        z-index: 50;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        white-space: nowrap;
+      }
+      .touch-hint.show {
+        opacity: 1;
+      }
+
+      .install-banner {
+        display: none;
+        position: fixed;
+        bottom: 1rem;
+        left: 0.75rem;
+        right: 0.75rem;
+        background: var(--bg-dark);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+        z-index: 200;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.3);
+      }
+      .install-banner.show {
+        display: flex;
+      }
+      .install-banner-text {
+        flex: 1;
+        font-size: 0.6rem;
+        font-weight: 300;
+        color: var(--text);
+        line-height: 1.4;
+      }
+      .install-banner-btn {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.55rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.75rem;
+        border: 1px solid var(--selected);
+        border-radius: 2px;
+        background: var(--selected);
+        color: var(--bg-dark);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .install-banner-dismiss {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.9rem;
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        padding: 0 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>{festivalName}</h1>
+      <div class="dates">{festivalDates}</div>
+    </header>
+
+    <div class="toolbar">
+      <button class="toolbar-btn active" id="filter-all">All</button>
+      <button class="toolbar-btn" id="filter-selected">
+        Starred<span class="count-badge" id="selected-count"></span>
+      </button>
+      <button class="toolbar-btn accent" id="clear-btn" disabled>
+        Clear all
+      </button>
+    </div>
+
+    <div class="day-tabs" id="day-tabs"></div>
+
+    <div id="schedule-container"></div>
+
+    <footer id="footer-hint">{footerDesktop}</footer>
+    <div class="touch-hint" id="touch-hint">{touchHint}</div>
+
+    <div class="install-banner" id="install-banner">
+      <div class="install-banner-text" id="install-banner-text"></div>
+      <button class="install-banner-btn" id="install-banner-btn">
+        Install
+      </button>
+      <button class="install-banner-dismiss" id="install-banner-dismiss">
+        &times;
+      </button>
+    </div>
+
+    <div class="panel-overlay" id="panel-overlay"></div>
+    <div class="artist-panel" id="artist-panel">
+      <button class="panel-close" id="panel-close">&times;</button>
+      <img class="panel-img" id="panel-img" src="" alt="" />
+      <div class="panel-body">
+        <div class="panel-artist-name" id="panel-name"></div>
+        <div class="panel-meta" id="panel-meta"></div>
+        <div class="panel-bio" id="panel-bio"></div>
+        <div class="panel-links" id="panel-links"></div>
+        <button class="panel-star-btn" id="panel-star"></button>
+      </div>
+    </div>
+
+    <style is:inline set:html={cssOverride}></style>
+    <script
+      is:inline
+      set:html={`window.__APP_CONFIG__ = ${JSON.stringify(appConfig)};`}
+    ></script>
+    <script type="module" src={appScript}></script>
+    <script
+      data-goatcounter="https://magfields.goatcounter.com/count"
+      async
+      src="//gc.zgo.at/count.js"
+    ></script>
+  </body>
+</html>

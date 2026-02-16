@@ -1,9 +1,11 @@
-const CACHE_NAME = "__CACHE_NAME__";
+const swUrl = new URL(self.location.href);
+const cacheVersion = swUrl.searchParams.get("v") || "dev";
+const cachePrefix = swUrl.searchParams.get("p") || "festival";
+const CACHE_NAME = `${cachePrefix}-${cacheVersion}`;
 const PRECACHE = ["/", "/index.html", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE)));
-  // Auto-activate immediately
   self.skipWaiting();
 });
 
@@ -13,7 +15,11 @@ self.addEventListener("activate", (e) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)),
+          keys
+            .filter(
+              (key) => key.startsWith(`${cachePrefix}-`) && key !== CACHE_NAME,
+            )
+            .map((key) => caches.delete(key)),
         ),
       ),
   );
@@ -43,12 +49,13 @@ self.addEventListener("fetch", (e) => {
           }
           return res;
         })
-        .catch(() => {
-          return new Response("Offline - resource not cached", {
-            status: 503,
-            statusText: "Service Unavailable",
-          });
-        });
+        .catch(
+          () =>
+            new Response("Offline - resource not cached", {
+              status: 503,
+              statusText: "Service Unavailable",
+            }),
+        );
     }),
   );
 });

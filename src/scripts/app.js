@@ -415,16 +415,7 @@ document.getElementById("panel-star").addEventListener("click", () => {
 document.getElementById("schedule-container").addEventListener("click", (e) => {
   const block = e.target.closest(".event-block");
   if (!block) return;
-  const id = block.dataset.id;
-  if (selections.has(id)) selections.delete(id);
-  else selections.add(id);
-  saveSelections(selections);
-  if (filterMode === "selected") {
-    render();
-  } else {
-    block.classList.toggle("selected");
-    updateCounts();
-  }
+  openPanel(block.dataset.artist, block.dataset.id);
 });
 
 document

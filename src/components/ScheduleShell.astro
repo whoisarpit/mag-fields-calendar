@@ -1,0 +1,21 @@
+---
+interface Props {
+  footerDesktop: string;
+  touchHint: string;
+}
+
+const { footerDesktop, touchHint } = Astro.props;
+---
+
+<div class="day-tabs" id="day-tabs"></div>
+
+<div id="schedule-container"></div>
+
+<footer id="footer-hint">{footerDesktop}</footer>
+<div class="touch-hint" id="touch-hint">{touchHint}</div>
+
+<div class="install-banner" id="install-banner">
+  <div class="install-banner-text" id="install-banner-text"></div>
+  <button class="install-banner-btn" id="install-banner-btn">Install</button>
+  <button class="install-banner-dismiss" id="install-banner-dismiss">&times;</button>
+</div>

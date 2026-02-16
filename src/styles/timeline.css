@@ -1,0 +1,189 @@
+.timeline-wrapper {
+  display: none;
+  overflow-x: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.timeline-wrapper.active {
+  display: block;
+}
+
+.timeline {
+  position: relative;
+  display: grid;
+  min-width: max-content;
+}
+
+.timeline-corner {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  width: var(--venue-w);
+  min-width: var(--venue-w);
+}
+
+.time-label {
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-align: left;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border-light);
+  white-space: nowrap;
+  min-width: var(--hour-w);
+  width: var(--hour-w);
+}
+
+.venue-label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--bg);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border);
+  width: var(--venue-w);
+  min-width: var(--venue-w);
+  height: var(--row-h);
+  line-height: 1.3;
+}
+
+.venue-track-cell {
+  border-right: 1px solid var(--border-light);
+  height: var(--row-h);
+}
+
+.event-block {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  border-radius: 3px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0.4rem;
+  z-index: 1;
+}
+
+.event-block:hover {
+  background: var(--card-hover);
+  z-index: 2;
+}
+
+.event-block.selected {
+  background: var(--selected-bg);
+  border-color: var(--selected-border);
+}
+
+.event-block.workshop {
+  background: var(--workshop-bg);
+  border-color: var(--workshop-border);
+}
+
+.event-block.workshop:hover {
+  background: rgba(138, 180, 180, 0.22);
+}
+
+.event-block.workshop.selected {
+  background: var(--selected-bg);
+  border-color: var(--selected-border);
+}
+
+.event-block .ev-name {
+  font-size: 0.6rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  transition: color 0.15s ease;
+}
+
+.event-block.selected .ev-name {
+  color: var(--selected);
+}
+
+.event-block .ev-time {
+  font-size: 0.5rem;
+  font-weight: 300;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.event-block .ev-tag {
+  font-size: 0.45rem;
+  font-weight: 400;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.now-line {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background: var(--now-line);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.now-line::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  background: var(--now-line);
+  border-radius: 50%;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-dim);
+  font-size: 0.7rem;
+  font-weight: 300;
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .venue-label {
+    font-size: 0.45rem;
+    padding: 0 0.3rem;
+  }
+
+  .time-label {
+    font-size: 0.5rem;
+  }
+
+  .event-block .ev-name {
+    font-size: 0.55rem;
+  }
+
+  .event-block .ev-time {
+    font-size: 0.45rem;
+  }
+}

@@ -1,0 +1,13 @@
+---
+interface Props {
+  festivalDates: string;
+  festivalName: string;
+}
+
+const { festivalDates, festivalName } = Astro.props;
+---
+
+<header>
+  <h1>{festivalName}</h1>
+  <div class="dates">{festivalDates}</div>
+</header>

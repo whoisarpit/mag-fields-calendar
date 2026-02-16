@@ -208,3 +208,59 @@ export function hexToRgba(color: string, alpha: number): string {
   const b = Number.parseInt(normalized.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
+
+function hexToRgb(color: string): { b: number; g: number; r: number } | null {
+  const normalized = normalizeHexColor(color);
+  if (!normalized) {
+    return null;
+  }
+
+  return {
+    r: Number.parseInt(normalized.slice(1, 3), 16),
+    g: Number.parseInt(normalized.slice(3, 5), 16),
+    b: Number.parseInt(normalized.slice(5, 7), 16),
+  };
+}
+
+function relativeLuminance({
+  r,
+  g,
+  b,
+}: {
+  b: number;
+  g: number;
+  r: number;
+}): number {
+  const toLinear = (value: number) => {
+    const srgb = value / 255;
+    return srgb <= 0.03928 ? srgb / 12.92 : ((srgb + 0.055) / 1.055) ** 2.4;
+  };
+
+  const red = toLinear(r);
+  const green = toLinear(g);
+  const blue = toLinear(b);
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+export function getEventTextColors(baseColor: string): {
+  primary: string;
+  secondary: string;
+} {
+  const rgb = hexToRgb(baseColor);
+  if (!rgb) {
+    return { primary: "var(--text)", secondary: "var(--text-dim)" };
+  }
+
+  const luminance = relativeLuminance(rgb);
+  if (luminance > 0.45) {
+    return {
+      primary: "rgba(20, 20, 20, 0.94)",
+      secondary: "rgba(20, 20, 20, 0.72)",
+    };
+  }
+
+  return {
+    primary: "rgba(255, 255, 255, 0.96)",
+    secondary: "rgba(255, 255, 255, 0.78)",
+  };
+}

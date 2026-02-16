@@ -15,6 +15,7 @@ import {
 import type { AppConfig, FilterMode } from "./schedule-app/lib/types";
 import {
   buildTimeLabels,
+  getEventTextColors,
   getCurrentTimeInfo,
   getDayMaps,
   getStorageKeys,
@@ -145,12 +146,15 @@ export default function ScheduleApp({
       Object.fromEntries(
         venues.map((venue, index) => {
           const baseColor = stagePalette[index % stagePalette.length];
+          const textColors = getEventTextColors(baseColor);
           return [
             venue.id,
             {
-              bg: hexToRgba(baseColor, 1),
-              border: hexToRgba(baseColor, 1),
-              hover: hexToRgba(baseColor, 1),
+              bg: hexToRgba(baseColor, 0.74),
+              border: hexToRgba(baseColor, 0.84),
+              hover: hexToRgba(baseColor, 0.82),
+              text: textColors.primary,
+              subtext: textColors.secondary,
             },
           ];
         }),

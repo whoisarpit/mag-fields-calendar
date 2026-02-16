@@ -82,6 +82,8 @@
   justify-content: center;
   padding: 0 0.4rem;
   z-index: 1;
+  backdrop-filter: blur(2px) saturate(115%);
+  -webkit-backdrop-filter: blur(2px) saturate(115%);
 }
 
 .event-block:hover {
@@ -97,6 +99,7 @@
 .event-block .ev-name {
   font-size: 0.6rem;
   font-weight: 500;
+  color: var(--event-text, var(--text));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -111,7 +114,7 @@
 .event-block .ev-time {
   font-size: 0.5rem;
   font-weight: 300;
-  color: var(--text-dim);
+  color: var(--event-subtext, var(--text-dim));
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -121,7 +124,7 @@
 .event-block .ev-tag {
   font-size: 0.45rem;
   font-weight: 400;
-  color: var(--text-dim);
+  color: var(--event-subtext, var(--text-dim));
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

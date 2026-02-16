@@ -39,7 +39,14 @@ export function ScheduleTimeline({
   selections: Set<string>;
   stageColors: Record<
     string,
-    { bg: string; border: string; hover: string } | undefined
+    | {
+        bg: string;
+        border: string;
+        hover: string;
+        subtext: string;
+        text: string;
+      }
+    | undefined
   >;
   timelineStart: number;
   timelineStartMins: number;
@@ -144,6 +151,8 @@ export function ScheduleTimeline({
                                   "--event-bg": color?.bg,
                                   "--event-border": color?.border,
                                   "--event-hover": color?.hover,
+                                  "--event-text": color?.text,
+                                  "--event-subtext": color?.subtext,
                                   left: `calc(${leftHours} * var(--hour-w))`,
                                   width: `max(calc(${durationHours} * var(--hour-w)), 30px)`,
                                 }}

@@ -4,6 +4,18 @@
   "festivalDates": "Feb 13 \u2013 15, 2026 \u00b7 Khetri, Rajasthan",
   "appShortName": "MF Nomads",
   "themeColor": "#5a6345",
+  "stagePalette": [
+    "#e8c547",
+    "#e87547",
+    "#6ea071",
+    "#6f8cb8",
+    "#b17eb3",
+    "#c98f50",
+    "#6bb3a5",
+    "#d86b8b",
+    "#8ea164",
+    "#7f93cc"
+  ],
   "cssVariables": {
     "bg": "#5a6345",
     "bg-dark": "#4a5238",

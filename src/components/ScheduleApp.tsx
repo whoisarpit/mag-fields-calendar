@@ -19,6 +19,7 @@ import {
   getDayMaps,
   getStorageKeys,
   groupScheduleByDay,
+  hexToRgba,
   parseEventId,
 } from "./schedule-app/lib/utils";
 
@@ -43,6 +44,7 @@ export default function ScheduleApp({
     footerTouch,
     installBannerAndroid,
     schedule,
+    stagePalette,
     storagePrefix,
     swCachePrefix,
     timelineEndNext,
@@ -138,6 +140,23 @@ export default function ScheduleApp({
       }),
     [dayOrder, schedule, venues, filterMode, selections],
   );
+  const stageColors = useMemo(
+    () =>
+      Object.fromEntries(
+        venues.map((venue, index) => {
+          const baseColor = stagePalette[index % stagePalette.length];
+          return [
+            venue.id,
+            {
+              bg: hexToRgba(baseColor, 0.18),
+              border: hexToRgba(baseColor, 0.55),
+              hover: hexToRgba(baseColor, 0.26),
+            },
+          ];
+        }),
+      ),
+    [venues, stagePalette],
+  );
 
   const panelArtist = panelArtistName ? artists[panelArtistName] : null;
   const panelEventParts = panelEventId ? parseEventId(panelEventId) : null;
@@ -197,6 +216,7 @@ export default function ScheduleApp({
         scheduleByDay={scheduleByDay}
         selectedDay={selectedDay}
         selections={selections}
+        stageColors={stageColors}
         timelineStart={timelineStart}
         timelineStartMins={timelineStartMins}
         totalHours={totalHours}

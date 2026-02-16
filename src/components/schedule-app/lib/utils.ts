@@ -178,3 +178,33 @@ export function groupScheduleByDay({
     return { day, filteredVenues, venueEvents };
   });
 }
+
+function normalizeHexColor(color: string): string | null {
+  const value = color.trim();
+  if (!value.startsWith("#")) {
+    return null;
+  }
+
+  if (/^#[0-9a-fA-F]{6}$/.test(value)) {
+    return value;
+  }
+
+  if (/^#[0-9a-fA-F]{3}$/.test(value)) {
+    const [r, g, b] = value.slice(1).split("");
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+
+  return null;
+}
+
+export function hexToRgba(color: string, alpha: number): string {
+  const normalized = normalizeHexColor(color);
+  if (!normalized) {
+    return color;
+  }
+
+  const r = Number.parseInt(normalized.slice(1, 3), 16);
+  const g = Number.parseInt(normalized.slice(3, 5), 16);
+  const b = Number.parseInt(normalized.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}

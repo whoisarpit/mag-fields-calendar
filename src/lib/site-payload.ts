@@ -70,6 +70,7 @@ type BrandingData = {
   footerTouch?: string;
   installBanner?: { android?: string };
   pageTitle?: string;
+  stagePalette?: string[];
   themeColor?: string;
   touchHint?: string;
 };
@@ -167,6 +168,11 @@ function parseBrandingData(input: unknown): BrandingData {
     footerTouch: optionalString(input.footerTouch),
     installBanner,
     pageTitle: optionalString(input.pageTitle),
+    stagePalette: Array.isArray(input.stagePalette)
+      ? input.stagePalette.filter(
+          (value): value is string => typeof value === "string",
+        )
+      : undefined,
     themeColor: optionalString(input.themeColor),
     touchHint: optionalString(input.touchHint),
   };
@@ -269,6 +275,10 @@ export function getSitePayload(publicBuildId?: string): SitePayload {
       storagePrefix: festivalData.storagePrefix || "festival",
       timelineStart: timeline.startHour ?? 9,
       timelineEndNext: timeline.endNextDayHour ?? 6,
+      stagePalette:
+        brandingData.stagePalette && brandingData.stagePalette.length > 0
+          ? brandingData.stagePalette
+          : ["#e8c547", "#e87547", "#6ea071", "#6f8cb8", "#b17eb3"],
       artistPageBaseUrl: festivalData.artistPage?.baseUrl || "",
       artistPageLabel: festivalData.artistPage?.label || "Artist page",
       cacheName: `${swCachePrefix}-${buildId}`,

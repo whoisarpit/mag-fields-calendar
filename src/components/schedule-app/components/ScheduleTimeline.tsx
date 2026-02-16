@@ -22,6 +22,7 @@ export function ScheduleTimeline({
   scheduleByDay,
   selectedDay,
   selections,
+  stageColors,
   timelineStart,
   timelineStartMins,
   totalHours,
@@ -36,6 +37,10 @@ export function ScheduleTimeline({
   scheduleByDay: DayScheduleGroup[];
   selectedDay: string;
   selections: Set<string>;
+  stageColors: Record<
+    string,
+    { bg: string; border: string; hover: string } | undefined
+  >;
   timelineStart: number;
   timelineStartMins: number;
   totalHours: number;
@@ -126,8 +131,8 @@ export function ScheduleTimeline({
                               SCHEDULE_UI.minEventDurationHours,
                             );
                             const selected = selections.has(id);
-                            const isWorkshop = event.tag === "Workshop";
-                            const className = `event-block${selected ? " selected" : ""}${isWorkshop ? " workshop" : ""}`;
+                            const className = `event-block${selected ? " selected" : ""}`;
+                            const color = stageColors[venue.id];
 
                             return (
                               <div
@@ -136,6 +141,9 @@ export function ScheduleTimeline({
                                 data-id={id}
                                 data-artist={event.artist}
                                 style={{
+                                  "--event-bg": color?.bg,
+                                  "--event-border": color?.border,
+                                  "--event-hover": color?.hover,
                                   left: `calc(${leftHours} * var(--hour-w))`,
                                   width: `max(calc(${durationHours} * var(--hour-w)), 30px)`,
                                 }}

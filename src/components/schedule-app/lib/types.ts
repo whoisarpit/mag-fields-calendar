@@ -54,6 +54,7 @@ export interface AppConfig {
   footerTouch: string;
   installBannerAndroid: string;
   schedule: ScheduleByDay;
+  stagePalette: string[];
   storagePrefix: string;
   swCachePrefix: string;
   timelineEndNext: number;

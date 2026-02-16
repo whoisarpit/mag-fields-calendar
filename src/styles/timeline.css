@@ -70,8 +70,8 @@
   top: 4px;
   bottom: 4px;
   border-radius: 3px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
+  background: var(--event-bg, var(--card-bg));
+  border: 1px solid var(--event-border, var(--border));
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
@@ -85,25 +85,11 @@
 }
 
 .event-block:hover {
-  background: var(--card-hover);
+  background: var(--event-hover, var(--card-hover));
   z-index: 2;
 }
 
 .event-block.selected {
-  background: var(--selected-bg);
-  border-color: var(--selected-border);
-}
-
-.event-block.workshop {
-  background: var(--workshop-bg);
-  border-color: var(--workshop-border);
-}
-
-.event-block.workshop:hover {
-  background: rgba(138, 180, 180, 0.22);
-}
-
-.event-block.workshop.selected {
   background: var(--selected-bg);
   border-color: var(--selected-border);
 }

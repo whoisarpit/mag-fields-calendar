@@ -191,7 +191,12 @@ export function ScheduleTimeline({
                                   {formatTime12Hour(event.end)}
                                 </span>
                                 {selected ? (
-                                  <span class="ev-star-indicator">Starred</span>
+                                  <span
+                                    class="ev-star-indicator"
+                                    title="Starred"
+                                  >
+                                    ★
+                                  </span>
                                 ) : null}
                                 {event.tag ? (
                                   <span class="ev-tag">{event.tag}</span>

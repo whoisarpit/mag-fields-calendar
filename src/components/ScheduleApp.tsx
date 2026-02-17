@@ -214,6 +214,7 @@ export default function ScheduleApp({
         labels={labels}
         nowLineRef={nowLineRef}
         onOpenPanel={openPanel}
+        onToggleSelection={toggleSelection}
         onScrollPositionChange={(day, left) => {
           setScrollPositions((current) => ({ ...current, [day]: left }));
         }}

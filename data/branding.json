@@ -32,9 +32,9 @@
     "workshop-bg": "rgba(138, 180, 180, 0.15)",
     "workshop-border": "rgba(138, 180, 180, 0.4)"
   },
-  "footerDesktop": "Click for artist info \u00b7 Star from artist panel \u00b7 Selections saved locally",
-  "footerTouch": "Tap for artist info \u00b7 Star from artist panel \u00b7 Selections saved locally",
-  "touchHint": "Tap for artist info",
+  "footerDesktop": "Click for artist info \u00b7 Right-click to star \u00b7 Selections saved locally",
+  "footerTouch": "Tap for artist info \u00b7 Long-press to star \u00b7 Selections saved locally",
+  "touchHint": "Long-press to star",
   "clearPrompt": "Clear all selections?",
   "installBanner": {
     "android": "Add to your home screen for quick access"

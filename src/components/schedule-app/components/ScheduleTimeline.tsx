@@ -18,6 +18,7 @@ export function ScheduleTimeline({
   labels,
   nowLineRef,
   onOpenPanel,
+  onToggleSelection,
   onScrollPositionChange,
   scheduleByDay,
   selectedDay,
@@ -33,6 +34,7 @@ export function ScheduleTimeline({
   labels: string[];
   nowLineRef: { current: HTMLDivElement | null };
   onOpenPanel: (artistName: string, eventId: string) => void;
+  onToggleSelection: (eventId: string) => void;
   onScrollPositionChange: (day: string, left: number) => void;
   scheduleByDay: DayScheduleGroup[];
   selectedDay: string;
@@ -160,17 +162,20 @@ export function ScheduleTimeline({
                                 onClick={() => onOpenPanel(event.artist, id)}
                                 onContextMenu={(eventObj) => {
                                   eventObj.preventDefault();
-                                  onOpenPanel(event.artist, id);
+                                  onToggleSelection(id);
                                 }}
                                 onTouchStart={() => {
                                   longPressRef.current.triggered = false;
                                   longPressRef.current.timer =
                                     window.setTimeout(() => {
                                       longPressRef.current.triggered = true;
-                                      onOpenPanel(event.artist, id);
+                                      onToggleSelection(id);
                                     }, SCHEDULE_UI.longPressMs);
                                 }}
                                 onTouchMove={() => {
+                                  clearLongPress();
+                                }}
+                                onTouchCancel={() => {
                                   clearLongPress();
                                 }}
                                 onTouchEnd={(eventObj) => {
@@ -185,6 +190,9 @@ export function ScheduleTimeline({
                                   {formatTime12Hour(event.start)} –{" "}
                                   {formatTime12Hour(event.end)}
                                 </span>
+                                {selected ? (
+                                  <span class="ev-star-indicator">Starred</span>
+                                ) : null}
                                 {event.tag ? (
                                   <span class="ev-tag">{event.tag}</span>
                                 ) : null}

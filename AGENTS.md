@@ -1,0 +1,1 @@
+- Always commit and push at every stage where you think an atomic change has been made.

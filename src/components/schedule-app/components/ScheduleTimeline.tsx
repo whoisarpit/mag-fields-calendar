@@ -59,6 +59,7 @@ export function ScheduleTimeline({
     timer: null,
     triggered: false,
   });
+  const suppressNextContextMenuRef = useRef(false);
 
   const clearLongPress = () => {
     if (longPressRef.current.timer) {
@@ -162,6 +163,10 @@ export function ScheduleTimeline({
                                 onClick={() => onOpenPanel(event.artist, id)}
                                 onContextMenu={(eventObj) => {
                                   eventObj.preventDefault();
+                                  if (suppressNextContextMenuRef.current) {
+                                    suppressNextContextMenuRef.current = false;
+                                    return;
+                                  }
                                   onToggleSelection(id);
                                 }}
                                 onTouchStart={() => {
@@ -169,6 +174,7 @@ export function ScheduleTimeline({
                                   longPressRef.current.timer =
                                     window.setTimeout(() => {
                                       longPressRef.current.triggered = true;
+                                      suppressNextContextMenuRef.current = true;
                                       onToggleSelection(id);
                                     }, SCHEDULE_UI.longPressMs);
                                 }}
